@@ -3,6 +3,7 @@ package com.example.order2gatherBE.models;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class OrderEventModel {
     private Integer id;
@@ -10,6 +11,7 @@ public class OrderEventModel {
     private Integer rid;
     @NotNull
     private Integer hostID;
+    private List<Integer> memberList;
     @NotEmpty
     private String secretCode;
     private Timestamp createTime;
@@ -23,6 +25,7 @@ public class OrderEventModel {
     public Integer getId() {
         return id;
     }
+    public void  setId(Integer id) { this.id = id; }
     public Integer getRId() {
         return rid;
     }
@@ -34,6 +37,9 @@ public class OrderEventModel {
     }
     public void setHostID(Integer hostID) {
         this.hostID = hostID;
+    }
+    public List<Integer> getMemberList() {
+        return memberList;
     }
     public String getSecretCode() {
         return secretCode;
