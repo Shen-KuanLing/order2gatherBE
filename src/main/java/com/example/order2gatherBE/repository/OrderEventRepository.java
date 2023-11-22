@@ -8,6 +8,7 @@ import com.example.order2gatherBE.models.OrderEventModel;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class OrderEventRepository {
@@ -40,5 +41,14 @@ public class OrderEventRepository {
         // Retrieve the DB auto generated order event id
         Integer orderEventId = keyHolder.getKey().intValue();
         orderEventModel.setId(orderEventId);
+
+        // Save member uids in the userOrderFood table
+        addMemberList(orderEventModel.getMemberList(), orderEventId);
+    }
+    private void addMemberList(List<Integer> memberList, Integer oid) {
+        String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
+        for (Integer memberId : memberList) {
+            jdbcTemplate.update(insertQuery, memberId, oid, "");
+        }
     }
 }
