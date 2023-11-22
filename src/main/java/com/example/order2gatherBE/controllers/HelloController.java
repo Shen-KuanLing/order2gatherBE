@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 // import org.json.*;
 
 import com.example.order2gatherBE.models.ReportModel;
-import com.example.order2gatherBE.service.ReportService;
+import com.example.order2gatherBE.services.ReportService;
 
 @RestController
 public class HelloController {

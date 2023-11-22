@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 
 import com.example.order2gatherBE.models.ReportModel;
-import com.example.order2gatherBE.service.ReportService;
+import com.example.order2gatherBE.services.ReportService;
 @RestController
 public class ReportController {
     
