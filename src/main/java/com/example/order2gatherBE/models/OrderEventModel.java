@@ -9,6 +9,7 @@ public class OrderEventModel {
     private Integer id;
     @NotNull
     private Integer rid;
+    private String rName;
     @NotNull
     private Integer hostID;
     private List<Integer> memberList;
@@ -28,6 +29,10 @@ public class OrderEventModel {
     public void  setId(Integer id) { this.id = id; }
     public Integer getRId() {
         return rid;
+    }
+    public String getRName() { return rName; }
+    public void setRName(String rName) {
+        this.rName = rName;
     }
     public void setRid(Integer rid) {
         this.rid = rid;
@@ -49,6 +54,9 @@ public class OrderEventModel {
     }
     public Timestamp getCreateTime() {
         return createTime;
+    }
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
     }
     public Timestamp getStopOrderingTime() {
         return stopOrderingTime;

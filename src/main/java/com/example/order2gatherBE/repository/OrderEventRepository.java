@@ -1,5 +1,6 @@
 package com.example.order2gatherBE.repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -49,6 +50,27 @@ public class OrderEventRepository {
         String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
         for (Integer memberId : memberList) {
             jdbcTemplate.update(insertQuery, memberId, oid, "");
+        }
+    }
+    public OrderEventModel getOrderEventByOid(Integer oid) {
+        String sql = "SELECT oe.id, oe.rid, oe.hostId, oe.secretcode, oe.createTime, oe.stopOrderingTime, "
+                + "oe.endEventTime, oe.estimatedArrivalTime, oe.totalPrice, oe.totalPeople, oe.status, r.name AS restaurantName "
+                + "FROM orderEvent oe JOIN restaurant r ON oe.rid = r.id WHERE oe.id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{oid}, new OrderEventRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+    public List<OrderEventModel> getOrderEventByUid(Integer uid) {
+        String sql = "SELECT oe.*, (SELECT r.name FROM restaurant r WHERE r.id = oe.rid) AS restaurantName "
+                + "FROM orderEvent oe "
+                + "JOIN userOrderFood uof ON oe.id = uof.oid "
+                + "WHERE uof.uid = ?";
+        try {
+            return jdbcTemplate.query(sql, new Object[]{uid}, new OrderEventRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
         }
     }
 }

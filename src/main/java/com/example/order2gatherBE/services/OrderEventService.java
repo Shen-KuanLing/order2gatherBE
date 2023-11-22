@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderEventService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -19,6 +21,12 @@ public class OrderEventService {
         validateOrderEventModel(orderEventModel);
         generateAndSetSecretCode(orderEventModel);
         orderEventRepository.createOrderEvent(orderEventModel);
+    }
+    public OrderEventModel getOrderEventByOid(Integer oid) {
+        return orderEventRepository.getOrderEventByOid(oid);
+    }
+    public List<OrderEventModel> getOrderEventByUid(Integer uid) {
+        return orderEventRepository.getOrderEventByUid(uid);
     }
 
     private void validateOrderEventModel(OrderEventModel orderEventModel) {
