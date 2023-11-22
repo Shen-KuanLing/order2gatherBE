@@ -24,6 +24,8 @@ public class AuthenticationRepository {
         try {
             String sql = "Select * from user where gmail = ?";
             List<UserModel> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserModel.class), gmail);
+            if (users.size() == 0)
+                return null;
             return users.get(0);
         } catch (EmptyResultDataAccessException e) {
             return null;
