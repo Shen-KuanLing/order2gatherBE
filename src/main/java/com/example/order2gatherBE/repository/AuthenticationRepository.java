@@ -18,33 +18,25 @@ public class AuthenticationRepository {
     private JdbcTemplate jdbcTemplate;
 
     /*
-     * Return user Object, if not exist return -1
+     * Return UserModel Object, if not exist return null
      */
     public UserModel findUserbyGmail(String gmail) {
-        try {
-            String sql = "Select * from user where gmail = ?";
-            List<UserModel> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserModel.class), gmail);
-            if (users.size() == 0)
-                return null;
-            return users.get(0);
-        } catch (EmptyResultDataAccessException e) {
+        String sql = "Select * from user where gmail = ?";
+        List<UserModel> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserModel.class), gmail);
+        if (users.size() == 0)
             return null;
-        }
-
+        return users.get(0);
     }
 
     /*
-     * Return user Object, if not exist return -1
+     * Return UserModel Object, if not exist return null
      */
     public UserModel findUserbyId(int uid) {
-        try {
-            String sql = "Select * from user where id = ?";
-            UserModel user = jdbcTemplate.queryForObject(sql, UserModel.class, uid);
-            return user;
-        } catch (EmptyResultDataAccessException e) {
+        String sql = "Select * from user where id = ?";
+        List<UserModel> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserModel.class), uid);
+        if (users.size() == 0)
             return null;
-        }
-
+        return users.get(0);
     }
 
     /*
