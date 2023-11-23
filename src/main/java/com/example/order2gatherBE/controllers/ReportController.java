@@ -26,8 +26,8 @@ public class ReportController {
     
     int counter=0;
    
-    public String sentReport(int userID, int hostID, int orderID, String comment) {
-        reportService.sentReport(userID, hostID, orderID,comment);
+    public String sentReport(int userID, int orderID, String comment) {
+        reportService.sentReport(userID, orderID,comment);
         return "report recieved!";
     }
     
@@ -35,11 +35,11 @@ public class ReportController {
     public String receiveReport(@RequestBody ReportModel formData) {
         
         // store it into database
-        reportModel.setReport(formData.getUID(), formData.getHID(), formData.getOID(), formData.getTimestamp(), formData.getComment());
+        reportModel.setReport(formData.getUID(),  formData.getOID(), formData.getTimestamp(), formData.getComment());
         reportService.addReport(reportModel);
         
         // activate sentReport() method
-        this.sentReport(formData.getUID(), formData.getHID(), formData.getOID(), formData.getComment());
+        this.sentReport(formData.getUID(), formData.getOID(), formData.getComment());
         String temp= String.format("{\"status\": \"success\", \"counter\": \"%d\", \"comment\": \" %s\"}",counter++,formData.getComment());
 
         // Return a response back to the frontend

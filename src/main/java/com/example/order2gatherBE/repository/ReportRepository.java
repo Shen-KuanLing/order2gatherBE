@@ -7,8 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.models.UserModel;
-
-import javax.sql.DataSource;
+import com.example.order2gatherBE.models.OrderEventModel;
 import java.util.List;
 
 
@@ -21,16 +20,24 @@ public class ReportRepository {
     // insert report to DB
     public void addReport(ReportModel report){
 		System.out.println("EXCUTE INSERT ");
-        jdbcTemplate.update("INSERT INTO report(uid, hid, oid, timestamp, comment) "+ "VALUES (?,?,?,?,?)", 
-                            report.getUID(), report.getHID(), report.getOID(),report.getTimestamp(), report.getComment());
+        jdbcTemplate.update("INSERT INTO report(uid, oid, timestamp, comment) "+ "VALUES (?,?,?,?,?)", 
+                            report.getUID(), report.getOID(),report.getTimestamp(), report.getComment());
   
     }
     
     // get gmail from database 
     @Autowired
-    public String findHostEmail(int hid) {
-        String sql = "Select * from user where id = ?";
-        List<UserModel> users = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(UserModel.class), hid);
+    public String findHostEmail(int oid) {
+        String sql_1 = "Select * from orderEvent where oid = ?";
+        
+        // find hostID by oid through OrderEventModel 
+        
+        // List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
+        // int hid=temp.get(0).getHostID();
+
+        // find host's Gmail
+        String sql_2 = "Select * from user where id = ?";
+        List<UserModel> users = jdbcTemplate.query(sql_2, new BeanPropertyRowMapper<>(UserModel.class), hid);
         if (users.size() == 0)
             return null;
         return users.get(0).getGmail();

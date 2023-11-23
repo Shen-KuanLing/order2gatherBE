@@ -20,11 +20,11 @@ public class ReportService {
 
 
     // send report through gmail
-    public String sentReport(int userID, int hostID, int orderID, String comment) {
+    public String sentReport(int userID, int orderID, String comment) {
         String systemEmail="order2getherofficial@gmail.com";
         
         // retrive host email from database
-        String hostEmail=reportRepo.findHostEmail(hostID);
+        String hostEmail=reportRepo.findHostEmail(orderID);
         
         try{
             // sending email
