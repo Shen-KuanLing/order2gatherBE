@@ -25,7 +25,6 @@ public class OrderEventController {
     @PostMapping("/create")
     public ResponseEntity<String> createOrderEvent(@Valid @RequestBody OrderEventModel orderEventModel) {
         orderEventService.createOrderEvent(orderEventModel);
-
         String jsonResponse = String.format("{\"Secret Code\": \"%s\"}", orderEventModel.getSecretCode());
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
