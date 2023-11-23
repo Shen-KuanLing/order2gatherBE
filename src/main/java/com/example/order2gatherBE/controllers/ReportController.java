@@ -14,6 +14,7 @@ import org.springframework.mail.SimpleMailMessage;
 
 import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.services.ReportService;
+
 @RestController
 public class ReportController {
     
@@ -31,22 +32,15 @@ public class ReportController {
     }
     
     @PostMapping(path="/report")
-    public String receiveReport(@RequestBody JSONObject formData) {
+    public String receiveReport(@RequestBody ReportModel formData) {
         
-        // recieve data
-        System.out.println(formData.get("UID").getClass());
-        int uid = Integer.valueOf(formData.get("UID").toString());
-        int hid = Integer.valueOf(formData.get("HID").toString());
-        int oid = Integer.valueOf(formData.get("OID").toString());
-        String content = (String) formData.get("content").toString();
-
         // store it into database
-        // reportModel.setReport(uid, hid, oid, null, content);
-        // reportService.addReport(reportModel);
+        reportModel.setReport(formData.getUID(), formData.getHID(), formData.getOID(), formData.getTimestamp(), formData.getComment());
+        reportService.addReport(reportModel);
         
         // activate sentReport() method
-        this.sentReport(uid, hid, oid, content);
-        String temp= String.format("{\"status\": \"success\", \"counter\": \"%d\", \"content\": \" %s\"}",counter++,formData.get("content"));
+        this.sentReport(formData.getUID(), formData.getHID(), formData.getOID(), formData.getComment());
+        String temp= String.format("{\"status\": \"success\", \"counter\": \"%d\", \"comment\": \" %s\"}",counter++,formData.getComment());
 
         // Return a response back to the frontend
         return temp;

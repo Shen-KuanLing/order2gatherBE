@@ -6,6 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import com.example.order2gatherBE.models.ReportModel;
+import com.example.order2gatherBE.repository.AuthenticationRepository;
 import com.example.order2gatherBE.repository.ReportRepository;
 
 @Service
@@ -13,15 +14,20 @@ public class ReportService {
     
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    ReportRepository reportRepo;
+
+
+    // send report through gmail
     public String sentReport(int userID, int hostID, int orderID, String comment) {
         String systemEmail="order2getherofficial@gmail.com";
         
         // retrive host email from database
-        String hostEmail="zer05082000@gmail.com";
-        
-        // check if the email address is valid
+        String hostEmail=reportRepo.findHostEmail(hostID);
         
         try{
+            // sending email
             SimpleMailMessage message=new SimpleMailMessage() ;
             message.setFrom(systemEmail);
             message.setTo(hostEmail);
@@ -31,13 +37,13 @@ public class ReportService {
             System.out.println(message);
         }catch(Exception e){
             System.out.println("error while sending email!\n"+e);
+            return "something wrong";
         }
         
         return "report recieved!";
     }
 
-    @Autowired
-    ReportRepository reportRepo;
+    // add report to the DB
     public void addReport(ReportModel report){
         reportRepo.addReport(report);
     }
