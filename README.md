@@ -5,7 +5,6 @@ order2gather backend code
 
     ./mvnw spring-boot:run
 
-
 ### Client Connect
 - browser: local host  
     http://localhost:8080/
