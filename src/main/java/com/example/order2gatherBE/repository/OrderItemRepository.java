@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.order2gatherBE.models.OrderItemModel;
 
-import java.util.List;
+import java.util.*;
 
 @Repository
 public class OrderItemRepository {
@@ -22,6 +22,18 @@ public class OrderItemRepository {
                             uid, oid, "", "", -1,-1, -1, "", -1);
     }
 
+    // get existed users
+    public List<Integer> getUsers(int oid){
+        System.out.println("EXCUTE getUsers");
+        String sql = "Select * from userOrderFood where oid =? and fid=-1";
+        List<OrderItemModel> orders = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(OrderItemModel.class), oid);
+        List<Integer> uids=new ArrayList<Integer>();
+        for (int i = 0; i < orders.size(); i++) {
+            uids.add(orders.get(i).getUID());
+        }
+        return uids;
+    }
+    
     // add new item 
     public void addOrderItem(OrderItemModel item){
         System.out.println("EXCUTE addOrderItem");

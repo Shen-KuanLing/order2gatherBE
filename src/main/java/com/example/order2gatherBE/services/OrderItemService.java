@@ -6,17 +6,23 @@ import org.springframework.stereotype.Service;
 import com.example.order2gatherBE.models.OrderItemModel;
 import com.example.order2gatherBE.repository.OrderItemRepository;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class OrderItemService {
     @Autowired
     OrderItemRepository orderItemRepository;
 
+    // init order event member
     public void initOrderEventMembers(int uid, int oid){
         orderItemRepository.initOrderEventMembers(uid,oid);
     }
 
+    // get existing user in an order event
+    public List<Integer> getUsers(int oid){
+        return orderItemRepository.getUsers(oid);
+    }
+    
     // to add item into DB
     public void addOrderItem(OrderItemModel orderItemModel){
         orderItemRepository.addOrderItem(orderItemModel);

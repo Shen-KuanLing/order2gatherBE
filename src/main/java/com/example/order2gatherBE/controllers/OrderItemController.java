@@ -9,21 +9,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.order2gatherBE.models.OrderItemModel;
 import com.example.order2gatherBE.services.OrderItemService;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class OrderItemController {
     @Autowired
     OrderItemService orderItemService;
     
-    // init: member tracking
+    // init order event member tracking (one user at a time)
     @PutMapping("/ordering/init")
     public String initOrderEventMembers(@RequestParam int uid,@RequestParam int oid ){
         orderItemService.initOrderEventMembers(uid,oid);
-        return "added";
+        return ("uid :" + Integer.toString(uid) + " added");
     }
 
-
+    // get all existing users in and order event
+    @PutMapping("/ordering/getUsers")
+    public List<Integer> getUsers(@RequestParam int oid ){
+        return orderItemService.getUsers(oid);
+    }
 
     // add new item to DB
     @PutMapping("/ordering/add")
