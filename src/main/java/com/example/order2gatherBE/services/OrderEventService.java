@@ -1,5 +1,7 @@
 package com.example.order2gatherBE.services;
 
+import com.example.order2gatherBE.exceptions.EntityNotFoundException;
+import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
 import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.repository.OrderEventRepository;
@@ -27,6 +29,52 @@ public class OrderEventService {
     }
     public List<OrderEventModel> getOrderEventByUid(Integer uid) {
         return orderEventRepository.getOrderEventByUid(uid);
+    }
+    public void updateOrderEvent(Integer oid, Integer uid, OrderEventModel updateRequest) {
+        OrderEventModel existingOrderEvent = orderEventRepository.getOrderEventByOid(oid);
+
+        if (existingOrderEvent == null) {
+            throw new EntityNotFoundException("OrderEvent not found with oid=" + oid);
+        }
+
+        validateUserPermission(uid, existingOrderEvent.getHostID());
+
+        // Update the fields based on the request body
+        updateOrderEventFields(existingOrderEvent, updateRequest);
+
+        orderEventRepository.updateOrderEvent(existingOrderEvent);
+    }
+
+    private void validateUserPermission(Integer uid, Integer hostId) {
+        if (!uid.equals(hostId)) {
+            throw new ForbiddenException("User does not have permission to update this OrderEvent.");
+        }
+    }
+
+    private void updateOrderEventFields(OrderEventModel orderEvent, OrderEventModel updateOrderEvent) {
+        // Update fields based on the request body
+        if (updateOrderEvent.getStopOrderingTime() != null) {
+            orderEvent.setStopOrderingTime(updateOrderEvent.getStopOrderingTime());
+        }
+
+        if (updateOrderEvent.getEstimatedArrivalTime() != null) {
+            orderEvent.setEstimatedArrivalTime(updateOrderEvent.getEstimatedArrivalTime());
+        }
+
+        if (updateOrderEvent.getEndEventTime() != null) {
+            orderEvent.setEndEventTime(updateOrderEvent.getEndEventTime());
+        }
+
+        if (updateOrderEvent.getStatus() != null) {
+            // check whether status is valid
+            int updatedStatus = updateOrderEvent.getStatus();
+            if (updatedStatus >= 1 && updatedStatus <= 4) {
+                orderEvent.setStatus(updatedStatus);
+            } else {
+                throw new IllegalArgumentException("Invalid status value. It should be between 1 and 4.");
+            }
+            orderEvent.setStatus(updateOrderEvent.getStatus());
+        }
     }
 
     private void validateOrderEventModel(OrderEventModel orderEventModel) {

@@ -1,5 +1,7 @@
 package com.example.order2gatherBE.controllers;
 
+import com.example.order2gatherBE.exceptions.EntityNotFoundException;
+import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
@@ -58,9 +60,29 @@ public class OrderEventController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
+    @PatchMapping("/update/{oid}")
+    public ResponseEntity<String> updateOrderEvent(@PathVariable("oid") Integer oid,
+                                                   @RequestHeader("uid") Integer uid,
+                                                   @RequestBody OrderEventModel updatedOrderEvent) {
+
+        orderEventService.updateOrderEvent(oid, uid, updatedOrderEvent);
+        return new ResponseEntity<>("OrderEvent updated successfully.", HttpStatus.OK);
+    }
 
     @ExceptionHandler(RequestBodyValidationException.class)
     public ResponseEntity<String> handleValidationException(RequestBodyValidationException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<String> handlePermissionException(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntityNotFoundException(EntityNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }

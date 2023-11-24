@@ -73,4 +73,15 @@ public class OrderEventRepository {
             return null;
         }
     }
+    public void updateOrderEvent(OrderEventModel updatedOrderEvent) {
+        String sql = "UPDATE orderEvent SET stopOrderingTime = ?, estimatedArrivalTime = ?, endEventTime = ?, " +
+                "status = ? WHERE id = ?";
+
+        jdbcTemplate.update(sql,
+                updatedOrderEvent.getStopOrderingTime(),
+                updatedOrderEvent.getEstimatedArrivalTime(),
+                updatedOrderEvent.getEndEventTime(),
+                updatedOrderEvent.getStatus(),
+                updatedOrderEvent.getId());
+    }
 }
