@@ -3,8 +3,10 @@ package com.example.order2gatherBE.controllers;
 import com.example.order2gatherBE.exceptions.EntityNotFoundException;
 import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.models.OrderEventModel;
+import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
+import com.example.order2gatherBE.util.ControllerAuthorization;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,17 +25,29 @@ import java.util.Map;
 public class OrderEventController {
     @Autowired
     OrderEventService orderEventService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createOrderEvent(@Valid @RequestBody OrderEventModel orderEventModel) {
+    public ResponseEntity<?> createOrderEvent(@RequestHeader("Authorization") String token,
+                                              @Valid @RequestBody OrderEventModel orderEventModel) {
+        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
+        if (permissionResponse != null) {
+            return permissionResponse;
+        }
         orderEventService.createOrderEvent(orderEventModel);
 
-        String jsonResponse = String.format("{\"id\": %d, \"Secret Code\": \"%s\"}", orderEventModel.getId(), orderEventModel.getSecretCode());
+        String jsonResponse = String.format("{\"id\": %d, \"SecretCode\": \"%s\"}", orderEventModel.getId(), orderEventModel.getSecretCode());
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
     @GetMapping("/view")
-    public ResponseEntity<?> getOrderEvent(@RequestParam(required = false) Integer oid,
+    public ResponseEntity<?> getOrderEvent(@RequestHeader("Authorization") String token,
+                                           @RequestParam(required = false) Integer oid,
                                            @RequestParam(required = false) Integer uid) {
+        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
+        if (permissionResponse != null) {
+            return permissionResponse;
+        }
         if (oid != null && uid == null) {
             OrderEventModel orderEventModel = orderEventService.getOrderEventByOid(oid);
             if (orderEventModel != null) {
@@ -61,14 +75,17 @@ public class OrderEventController {
         }
     }
     @PatchMapping("/update/{oid}")
-    public ResponseEntity<String> updateOrderEvent(@PathVariable("oid") Integer oid,
+    public ResponseEntity<?> updateOrderEvent(@RequestHeader("Authorization") String token,
+                                                   @PathVariable("oid") Integer oid,
                                                    @RequestHeader("uid") Integer uid,
                                                    @RequestBody OrderEventModel updatedOrderEvent) {
-
+        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
+        if (permissionResponse != null) {
+            return permissionResponse;
+        }
         orderEventService.updateOrderEvent(oid, uid, updatedOrderEvent);
         return new ResponseEntity<>("OrderEvent updated successfully.", HttpStatus.OK);
     }
-
     @ExceptionHandler(RequestBodyValidationException.class)
     public ResponseEntity<String> handleValidationException(RequestBodyValidationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
