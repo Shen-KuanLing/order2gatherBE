@@ -28,12 +28,12 @@ public class ReportRepository {
     // get gmail from database 
     @Autowired
     public String findHostEmail(int oid) {
-        String sql_1 = "Select * from orderEvent where oid = ?";
         
         // find hostID by oid through OrderEventModel 
-        
-        // List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
-        // int hid=temp.get(0).getHostID();
+        String sql_1 = "Select * from orderEvent where id = ?";
+        List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
+        int hid=temp.get(0).getHostID();
+
 
         // find host's Gmail
         String sql_2 = "Select * from user where id = ?";
