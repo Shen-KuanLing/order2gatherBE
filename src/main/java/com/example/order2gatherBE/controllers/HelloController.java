@@ -27,7 +27,7 @@ public class HelloController {
     ReportService reportService;
     
     public String sentReport(int userID, int hostID, int orderID, String comment) {
-        reportService.sentReport(userID, hostID, orderID,comment);
+        // reportService.sentReport(userID, hostID, orderID,comment);
         return "report recieved!";
     }
     
