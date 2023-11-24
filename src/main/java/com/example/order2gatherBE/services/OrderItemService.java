@@ -12,6 +12,11 @@ import java.util.List;
 public class OrderItemService {
     @Autowired
     OrderItemRepository orderItemRepository;
+
+    public void initOrderEventMembers(int uid, int oid){
+        orderItemRepository.initOrderEventMembers(uid,oid);
+    }
+
     // to add item into DB
     public void addOrderItem(OrderItemModel orderItemModel){
         orderItemRepository.addOrderItem(orderItemModel);
@@ -22,13 +27,19 @@ public class OrderItemService {
         orderItemRepository.modifyOrderItem(orderItemModel);
     }
     
-    // to get all item in an order event
-    public List<OrderItemModel> getAllOrderItem(int uid, int oid){
-        return orderItemRepository.getAllOrderItem(uid, oid);
-    }
-
     // to mark an item deleted in DB
     public void deleteOrderItem(OrderItemModel orderItemModel){
-        orderItemRepository.markDeleted((orderItemModel));
+        orderItemRepository.deleteOrderItem(orderItemModel);
+    }
+
+    // to get all item of a user in an order event
+    public List<OrderItemModel> getUserOrderItem(int uid, int oid){
+        return orderItemRepository.getUserOrderItem(uid, oid);
+    }
+
+    
+    // to get all item of an order event
+    public List<OrderItemModel> getAllOrderItem(int oid){
+        return orderItemRepository.getAllOrderItem(oid);
     }
 }

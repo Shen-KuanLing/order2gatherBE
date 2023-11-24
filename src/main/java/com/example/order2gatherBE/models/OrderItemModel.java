@@ -30,7 +30,7 @@ public class OrderItemModel {
     // ##### do we need this cols? #####
     @NotNull
     private int fid;//food ID
-    private boolean isDeleted=false;
+    // private boolean isDeleted=false;
     
     // set
     public void setOrderItem(   int uid, int oid, String foodName, String hostViewFoodName, 
@@ -44,7 +44,7 @@ public class OrderItemModel {
         this.num = num;
         this.comment = comment;
 
-        // need this ?
+        // new key
         this.fid=fid;
         
     }
@@ -76,12 +76,13 @@ public class OrderItemModel {
         return this.comment;
     }
     
-    //need this?
+    // new key
     public int getFID(){
         return this.fid;
     }
+
     //need this?
-    public boolean isDeleted(){
-        return this.isDeleted;
-    }
+    // public boolean isDeleted(){
+    //     return this.isDeleted;
+    // }
 }
