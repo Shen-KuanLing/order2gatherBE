@@ -6,7 +6,6 @@ import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
-import com.example.order2gatherBE.util.ControllerAuthorization;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,26 +31,30 @@ public class OrderEventController {
     Map<String, Integer> statusResponse = new HashMap<>();
 
     @PostMapping("/create")
-    public ResponseEntity<?> createOrderEvent(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> createOrderEvent(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                               @Valid @RequestBody OrderEventModel orderEventModel) {
-        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
-        if (permissionResponse != null) {
-            return permissionResponse;
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            response.put("message", "User doesn't have the permission.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
+        orderEventModel.setHostID(uid);
         orderEventService.createOrderEvent(orderEventModel);
 
         String jsonResponse = String.format("{\"id\": %d, \"SecretCode\": \"%s\"}", orderEventModel.getId(), orderEventModel.getSecretCode());
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
     @GetMapping("/view")
-    public ResponseEntity<?> getOrderEvent(@RequestHeader("Authorization") String token,
-                                           @RequestParam(required = false) Integer oid,
-                                           @RequestParam(required = false) Integer uid) {
-        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
-        if (permissionResponse != null) {
-            return permissionResponse;
+    public ResponseEntity<?> getOrderEvent(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                           @RequestParam(required = false) Integer oid) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            response.put("message", "User doesn't have the permission.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
-        if (oid != null && uid == null) {
+        if (oid != null) {
             OrderEventModel orderEventModel = orderEventService.getOrderEventByOid(oid);
             if (orderEventModel != null) {
                 return new ResponseEntity<>(orderEventModel, HttpStatus.OK);
@@ -59,7 +62,7 @@ public class OrderEventController {
                 response.put("message", "There's no corresponding order event.");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-        } else if (uid != null && oid == null) {
+        } else {
             List<OrderEventModel> orderEventModels = orderEventService.getOrderEventByUid(uid);
             if (!orderEventModels.isEmpty()) {
                 return new ResponseEntity<>(orderEventModels, HttpStatus.OK);
@@ -68,20 +71,17 @@ public class OrderEventController {
                 response.put("message", message);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
-        } else {
-            // Handle the case where neither oid nor uid is provided
-            response.put("message", "Please provide either oid or uid parameter.");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
     @PatchMapping("/update/{oid}")
-    public ResponseEntity<?> updateOrderEvent(@RequestHeader("Authorization") String token,
+    public ResponseEntity<?> updateOrderEvent(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                               @PathVariable("oid") Integer oid,
-                                              @RequestHeader("uid") Integer uid,
                                               @RequestBody OrderEventModel updatedOrderEvent) {
-        ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
-        if (permissionResponse != null) {
-            return permissionResponse;
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            response.put("message", "User doesn't have the permission.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
         orderEventService.updateOrderEvent(oid, uid, updatedOrderEvent);
         return new ResponseEntity<>("OrderEvent updated successfully.", HttpStatus.OK);
@@ -91,6 +91,10 @@ public class OrderEventController {
                                             @RequestParam(required = true) String SecretCode) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
+        if(uid == -1) {
+            response.put("message", "User doesn't have the permission.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
         int status = orderEventService.joinOrderEvent(SecretCode, uid);
         statusResponse.put("status", status);
         return new ResponseEntity<>(statusResponse, HttpStatus.OK);

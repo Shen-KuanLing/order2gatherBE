@@ -99,8 +99,8 @@ public class OrderEventService {
 
     private void validateOrderEventModel(OrderEventModel orderEventModel) {
         if (orderEventModel.getRId() == null || orderEventModel.getHostID() == null) {
-            logger.error("Invalid OrderEventModel: rid and hostID cannot be null. rid={}, hostID={} is provided.", orderEventModel.getRId(), orderEventModel.getHostID());
-            throw new RequestBodyValidationException("'rid' and 'hostID' are required and the value should be valid.");
+            logger.error("Invalid OrderEventModel: rid cannot be null. rid={} is provided.", orderEventModel.getRId());
+            throw new RequestBodyValidationException("'rid' is required and the value should be valid.");
         }
     }
 

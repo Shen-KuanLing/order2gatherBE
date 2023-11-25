@@ -10,7 +10,6 @@ public class OrderEventModel {
     @NotNull
     private Integer rid;
     private String rName;
-    @NotNull
     private Integer hostID;
     private List<Integer> memberList;
     @NotEmpty
