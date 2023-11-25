@@ -1,31 +1,52 @@
 package com.example.order2gatherBE.util;
+import com.example.order2gatherBE.exceptions.ResponseEntityException;
+import com.example.order2gatherBE.models.RestaurantModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 
 public class RestaurantFormatGenerator {
 
-    private static String jsonify(Object obj) throws Exception{
+    private static String jsonify(Object obj){
         ObjectMapper objectMapper = new ObjectMapper();
-
-        String jsonStr = objectMapper.writeValueAsString(obj);
-        System.out.println(jsonStr);
+        String jsonStr="" ;
+        try {
+            if(obj == null)
+                return "";
+            jsonStr = objectMapper.writeValueAsString(obj);
+        }catch (Exception e) {
+            throw new ResponseEntityException("Failed to Contruct Response Entity", e.getMessage());
+        }
         return jsonStr;
     }
-    public static String generateFormat(int status, String dataFormat){
-        String jsonFormat = String.format("{\"status\":%d, \"data\": {\"restaurants\" : %s } }", status, dataFormat);
-        System.out.println("Serialize Module "+jsonFormat);
+
+    public static RestaurantModel toModule(String json)  {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json, RestaurantModel.class);
+        }catch (Exception e) {
+            throw new ResponseEntityException("Failed to build Request Entity", e.getMessage());
+        }
+    }
+
+
+    //Overloading
+    public static String generateFormat(String message, HashMap<String, Object> objMap) throws ResponseEntityException{
+        String jsonFormat = String.format("{\"message\":\"%s\", ",message);
+        for(String name:  objMap.keySet()){
+            if(name.equals("menu")){
+                jsonFormat += String.format(  "\"%s\": %s, " , name, objMap.get(name));
+            }else{
+                jsonFormat += String.format(  "\"%s\": %s, " , name,jsonify(objMap.get(name)));
+            }
+        }
+
+        jsonFormat += "}";
         return jsonFormat;
     }
 
-    public static String generateFormat(int status, HashMap<String, Object> objMap) throws Exception{
-        String jsonFormat = String.format("{\"status\":%d, \"data\": { ", status);
-        for(String infoName: objMap.keySet()){
-            jsonFormat += String.format("\"%s\": %s ,", infoName,
-                    jsonify(objMap.get(infoName)));
-        }
-        jsonFormat += " } }";
-        System.out.println(jsonFormat);
-        return jsonFormat;
+    //Overloading
+    public static String generateFormat(String message) throws ResponseEntityException{
+        return String.format("{\"message\": \"%s\" }",  message);
     }
 }
