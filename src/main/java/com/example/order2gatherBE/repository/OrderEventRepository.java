@@ -46,7 +46,7 @@ public class OrderEventRepository {
         // Save member uids in the userOrderFood table
         addMemberList(orderEventModel.getMemberList(), orderEventId);
     }
-    private void addMemberList(List<Integer> memberList, Integer oid) {
+    public void addMemberList(List<Integer> memberList, Integer oid) {
         String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
         for (Integer memberId : memberList) {
             jdbcTemplate.update(insertQuery, memberId, oid, "");
@@ -83,5 +83,21 @@ public class OrderEventRepository {
                 updatedOrderEvent.getEndEventTime(),
                 updatedOrderEvent.getStatus(),
                 updatedOrderEvent.getId());
+    }
+    public Integer getOidBySecretCode(String secretCode) {
+        String sql = "SELECT id FROM orderEvent WHERE secretcode = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{secretCode}, Integer.class);
+        } catch (EmptyResultDataAccessException e) {
+            return -1;
+        }
+    }
+    public boolean isUserInOrderEvent(Integer uid, Integer oid) {
+        String sql = "SELECT COUNT(*) FROM userOrderFood WHERE uid = ? AND oid = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{uid, oid}, Integer.class) > 0;
+    }
+    public void updateOrderEventTotalPeople(Integer oid) {
+        String sql = "UPDATE orderEvent SET totalPeople = totalPeople + 1 WHERE id = ?";
+        jdbcTemplate.update(sql, oid);
     }
 }

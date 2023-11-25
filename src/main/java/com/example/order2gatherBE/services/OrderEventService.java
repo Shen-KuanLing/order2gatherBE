@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -43,6 +44,25 @@ public class OrderEventService {
         updateOrderEventFields(existingOrderEvent, updateRequest);
 
         orderEventRepository.updateOrderEvent(existingOrderEvent);
+    }
+    public int joinOrderEvent(String secretCode, Integer uid) {
+        Integer oid = orderEventRepository.getOidBySecretCode(secretCode);
+        // no orderEvent is found
+        if (oid == -1) {
+            return -1;
+        }
+        // Check if the user already joined the orderEvent
+        if (!orderEventRepository.isUserInOrderEvent(uid, oid)) {
+            List<Integer> memberList = Arrays.asList(uid);
+            orderEventRepository.addMemberList(memberList, oid);
+            // Update orderEvent totalPeople
+            orderEventRepository.updateOrderEventTotalPeople(oid);
+            // Return success status
+            return 0;
+        } else {
+            // the user has already joined the orderEvent
+            return 1;
+        }
     }
 
     private void validateUserPermission(Integer uid, Integer hostId) {

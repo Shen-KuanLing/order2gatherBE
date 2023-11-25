@@ -7,6 +7,7 @@ import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
 import com.example.order2gatherBE.util.ControllerAuthorization;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class OrderEventController {
     OrderEventService orderEventService;
     @Autowired
     private AuthenticationService authenticationService;
+    Map<String, String> response = new HashMap<>();
+    Map<String, Integer> statusResponse = new HashMap<>();
 
     @PostMapping("/create")
     public ResponseEntity<?> createOrderEvent(@RequestHeader("Authorization") String token,
@@ -53,7 +56,6 @@ public class OrderEventController {
             if (orderEventModel != null) {
                 return new ResponseEntity<>(orderEventModel, HttpStatus.OK);
             } else {
-                Map<String, String> response = new HashMap<>();
                 response.put("message", "There's no corresponding order event.");
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
@@ -63,28 +65,35 @@ public class OrderEventController {
                 return new ResponseEntity<>(orderEventModels, HttpStatus.OK);
             } else {
                 String message = String.format("User %d doesn't join any order event so far.", uid);
-                Map<String, String> response = new HashMap<>();
                 response.put("message", message);
                 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
         } else {
             // Handle the case where neither oid nor uid is provided
-            Map<String, String> response = new HashMap<>();
             response.put("message", "Please provide either oid or uid parameter.");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
     @PatchMapping("/update/{oid}")
     public ResponseEntity<?> updateOrderEvent(@RequestHeader("Authorization") String token,
-                                                   @PathVariable("oid") Integer oid,
-                                                   @RequestHeader("uid") Integer uid,
-                                                   @RequestBody OrderEventModel updatedOrderEvent) {
+                                              @PathVariable("oid") Integer oid,
+                                              @RequestHeader("uid") Integer uid,
+                                              @RequestBody OrderEventModel updatedOrderEvent) {
         ResponseEntity<?> permissionResponse = ControllerAuthorization.verifyAndResponse(token, authenticationService);
         if (permissionResponse != null) {
             return permissionResponse;
         }
         orderEventService.updateOrderEvent(oid, uid, updatedOrderEvent);
         return new ResponseEntity<>("OrderEvent updated successfully.", HttpStatus.OK);
+    }
+    @PostMapping("/join")
+    public ResponseEntity<?> joinOrderEvent(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                            @RequestParam(required = true) String SecretCode) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        int status = orderEventService.joinOrderEvent(SecretCode, uid);
+        statusResponse.put("status", status);
+        return new ResponseEntity<>(statusResponse, HttpStatus.OK);
     }
     @ExceptionHandler(RequestBodyValidationException.class)
     public ResponseEntity<String> handleValidationException(RequestBodyValidationException ex) {
