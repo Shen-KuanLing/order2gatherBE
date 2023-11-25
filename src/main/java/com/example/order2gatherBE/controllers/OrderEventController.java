@@ -6,6 +6,7 @@ import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.exceptions.RequestBodyValidationException;
+import com.example.order2gatherBE.services.OrderItemService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +26,8 @@ import java.util.Map;
 public class OrderEventController {
     @Autowired
     OrderEventService orderEventService;
+    @Autowired
+    OrderItemService orderItemService;
     @Autowired
     private AuthenticationService authenticationService;
     Map<String, String> response = new HashMap<>();
@@ -98,6 +101,18 @@ public class OrderEventController {
         int status = orderEventService.joinOrderEvent(SecretCode, uid);
         statusResponse.put("status", status);
         return new ResponseEntity<>(statusResponse, HttpStatus.OK);
+    }
+    @GetMapping("/organize")
+    public ResponseEntity<?> organizeOrders(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                            @RequestParam(required = true) int oid) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if(uid == -1) {
+            response.put("message", "User doesn't have the permission.");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        }
+        Map<String, Object> responseData = orderItemService.organizeHostViewOrders(oid);
+        return new ResponseEntity<>(responseData, HttpStatus.OK);
     }
     @ExceptionHandler(RequestBodyValidationException.class)
     public ResponseEntity<String> handleValidationException(RequestBodyValidationException ex) {
