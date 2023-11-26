@@ -19,9 +19,9 @@ public class RestaurantRepository{
     private JdbcTemplate jdbcTemplate;
 
     // Get Restaurant Detail
-    public RestaurantModel getRestDetail(int restaurantID, int uid) throws DataAccessException
+    public RestaurantModel getRestDetail(int restaurantID, int uid)
     {
-        String sql = "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ";
+        String sql = "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ;";
         List<RestaurantModel> restaurantList = null;
         RestaurantModel restaurantModel = null;
         try {
@@ -30,21 +30,21 @@ public class RestaurantRepository{
             if(!restaurantList.isEmpty())
                 restaurantModel = restaurantList.get(0);
         }catch(Exception e){
-            throw new DataAccessException(404, "Get Image Failed. Please check is deleted or not. ", e.getMessage());
+            throw new DataAccessException(404, "[SQL EXCEPTION]: Get Image Failed. Please check is deleted or not. ", e.getMessage());
         }
         return restaurantModel;
     }
 
     // Add Restaurant Information
-    public void save(RestaurantModel restaurantModel)  {
+    public int save(RestaurantModel restaurantModel)  {
         String sql = "INSERT INTO restaurant(uid, name, address, phone, isDelete, openHour) Values(?, ?, ?, ?, ?, ?);";
         try {
-            this.jdbcTemplate.update(sql,
+            return this.jdbcTemplate.update(sql,
                     new Object[]{restaurantModel.getUid(), restaurantModel.getName(),
                             restaurantModel.getAddress(), restaurantModel.getPhone(),
                             0, restaurantModel.getOpenHour()});
         }catch (Exception e){
-            throw new DataAccessException(500, "Fail to save Restaurant", e.getMessage());
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to save Restaurant", e.getMessage());
         }
     }
 
@@ -53,15 +53,21 @@ public class RestaurantRepository{
         String sql = String.format("UPDATE Restaurant SET name=\"%s\", address=\"%s\", phone=\"%s\", openHour=\"%s\" WHERE id=%d AND uid=%d;",
                     restaurantModel.getName(), restaurantModel.getAddress(), restaurantModel.getPhone(), restaurantModel.getOpenHour(),
                     restaurantModel.getId(), restaurantModel.getUid());
-        return this.jdbcTemplate.update(sql);
+        try{
+            return this.jdbcTemplate.update(sql);
+        }catch (Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to update Restaurant", e.getMessage());
+        }
     }
 
     public List<RestaurantModel> findByUId(Integer userID){
         String sql = "Select * FROM restaurant WHERE uid = ? and isDelete = 0";
-        List<RestaurantModel> rests = null;
-        rests = this.jdbcTemplate.query(sql,
-                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), userID );
-        return rests;
+        try {
+            return this.jdbcTemplate.query(sql,
+                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), userID);
+        }catch(Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to find Restaurant List by user id", e.getMessage());
+        }
     }
 
     public int deleteByName(String restaurantName) {
@@ -71,15 +77,20 @@ public class RestaurantRepository{
 
     }
 
-
     public int deleteById(Integer restaurantId , int uid) {
         String sql = "UPDATE restaurant SET isDelete = ? WHERE id = ? and uid = ?";
-        return this.jdbcTemplate.update(sql, new Object[] {1, restaurantId, uid });
+        try{
+            return this.jdbcTemplate.update(sql, new Object[] {1, restaurantId, uid });
+        }catch(Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to delete Restaurant by restaurant id", e.getMessage());
+        }
     }
-
-
-    public int getTableSize(){
-        return this.jdbcTemplate.queryForObject("Select count(*) FROM Restaurant", Integer.class);
+    public int getSaveRestaurantID(){
+        try{
+            return this.jdbcTemplate.queryForObject("Select count(*) FROM Restaurant", Integer.class);
+        }catch(Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to get Restaurant Table Size", e.getMessage());
+        }
     }
 
 }

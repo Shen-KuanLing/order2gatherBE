@@ -1,6 +1,7 @@
 package com.example.order2gatherBE.repository;
 
 
+import com.example.order2gatherBE.exceptions.DataAccessException;
 import com.example.order2gatherBE.models.FoodModel;
 import com.example.order2gatherBE.models.RestaurantModel;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
@@ -23,12 +24,16 @@ public class FoodRepository {
 
         String sql = "Select * FROM food WHERE rid = ? ";
         List<FoodModel> foods = null;
-        foods = this.jdbcTemplate.query(sql,
-                new BeanPropertyRowMapper<FoodModel>(FoodModel.class), rid );
+        try {
+            foods = this.jdbcTemplate.query(sql,
+                    new BeanPropertyRowMapper<FoodModel>(FoodModel.class), rid);
+        }catch(Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to get foods", e.getMessage());
+        }
         return foods;
     }
 
-
+    // Not use it
     public String save(List<FoodModel> foods){
 
         String sql = "Insert * FROM food(rid, name, price) VALUES (?, ?, ?)  ";
@@ -44,7 +49,6 @@ public class FoodRepository {
                     ps.setInt(3, food.getPrice());
 
                 }
-
                 @Override
                 public int getBatchSize() {
                     return foods.size();
@@ -52,8 +56,7 @@ public class FoodRepository {
             });
             return "Success";
         }catch (Exception e){
-            e.printStackTrace();
-            return "Failed";
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to save foods", e.getMessage());
         }
     }
 }

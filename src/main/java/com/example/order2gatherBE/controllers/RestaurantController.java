@@ -1,6 +1,7 @@
 package com.example.order2gatherBE.controllers;
 
 import com.example.order2gatherBE.exceptions.DataAccessException;
+import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.exceptions.ResponseEntityException;
 import com.example.order2gatherBE.models.RestaurantImageModel;
 import com.example.order2gatherBE.models.RestaurantModel;
@@ -32,7 +33,7 @@ public class RestaurantController {
     @GetMapping(value = "/display", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> getRestaurants(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestParam(value = "rid", required = false) String rid) throws DataAccessException, ResponseEntityException
+            @RequestParam(value = "rid", required = false) String rid)
     {
         //Authorized
         token = token.replace("Bearer ", "");
@@ -58,7 +59,7 @@ public class RestaurantController {
         if(formatMap.isEmpty()) {
             message = "No Restaurant Detail";
             formatStr = generateFormat(message);
-            code = HttpStatus.BAD_REQUEST;
+            code = HttpStatus.FORBIDDEN;
         }else {
             formatStr = generateFormat(message, formatMap);
         }
@@ -73,7 +74,7 @@ public class RestaurantController {
     @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteRestaurantDetail(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestParam(value = "rid")int rid) throws DataAccessException {
+            @RequestParam(value = "rid")int rid) {
 
         //Authorized
         token = token.replace("Bearer ", "");
@@ -101,7 +102,6 @@ public class RestaurantController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestParam("restaurant") String rest,
             @RequestParam(value = "menu", required = false) MultipartFile[] images)
-            throws DataAccessException, ResponseEntityException
     {
         //Authorized
         token = token.replace("Bearer ", "");
@@ -120,8 +120,8 @@ public class RestaurantController {
 
         int rid = restaurantService.saveRestaurant(restModel);
         restModel.setId(rid);
+        System.out.println(rid);
         if(images != null) {
-                System.out.println("Pass restaurant");
                 Arrays.asList(images).stream().forEach(image -> {
                     restaurantService.saveImage(restModel.getId(), image);
                     fileNames.add(image.getOriginalFilename());
@@ -130,7 +130,7 @@ public class RestaurantController {
         message = "Uploaded the files successfully: " + fileNames;
         return ResponseEntity
                     .status(HttpStatus.CREATED)
-                    .body(String.format("{\"status\": %d, \"message\": %s }",0,  message));
+                    .body(String.format("{\"status\": %d, \"message\": \"%s\" }",0,  message));
 
     }
 
@@ -140,8 +140,8 @@ public class RestaurantController {
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam("restaurant") String rest,
             @RequestParam(value = "menu", required = false) MultipartFile[] images)
-            throws DataAccessException, ResponseEntityException
     {
+
 
         //Authorized
         token = token.replace("Bearer ", "");
@@ -174,11 +174,12 @@ public class RestaurantController {
             else
                 message = "Update the restaurant successfully";
         }
-
         return ResponseEntity
                     .status(code)
                     .body(String.format("{\"message\": \"%s\" }", message));
 
     }
+
+
 
 }

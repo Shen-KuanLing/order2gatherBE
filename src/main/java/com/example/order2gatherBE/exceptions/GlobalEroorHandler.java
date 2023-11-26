@@ -48,6 +48,4 @@ public class GlobalEroorHandler {
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ExceptionJsonResponse(dae.getMessage(), dae.getErrorMsg()));
     }
-
-
 }

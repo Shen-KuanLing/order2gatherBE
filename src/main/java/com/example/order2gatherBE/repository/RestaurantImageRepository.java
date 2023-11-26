@@ -28,6 +28,7 @@ public class RestaurantImageRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    // Get Menu Image
     public List<RestaurantImageModel> get(int rid){
         String sql = "Select * FROM restaurantImage WHERE rid = ?";
         List<RestaurantImageModel> images = null;
@@ -36,24 +37,27 @@ public class RestaurantImageRepository {
             images = (List<RestaurantImageModel>) this.jdbcTemplate.query(sql,
                     new BeanPropertyRowMapper<RestaurantImageModel>(RestaurantImageModel.class), rid);
         }catch (Exception e){
-            throw new DataAccessException(500, "Fail to get menu image", e.getMessage());
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to get menu image", e.getMessage());
         }
         return images;
     }
 
+    // Save Menu Image
     public String save(RestaurantImageModel menu){
 
         String sql = "Insert INTO restaurantImage(rid, menuImage) VALUES (?, ?)  ";
         try {
+
             this.jdbcTemplate.update(
                     sql,
                     new Object[] {
                             menu.getRId(),
                             new SqlLobValue(menu.getMenuImage(), new DefaultLobHandler())},
                     new int[] {Types.INTEGER, Types.BLOB});
+
             return "Success";
         }catch (Exception e){
-            throw new DataAccessException(500, "Fail to save Images", e.getMessage());
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to save Images", e.getMessage());
         }
     }
 }

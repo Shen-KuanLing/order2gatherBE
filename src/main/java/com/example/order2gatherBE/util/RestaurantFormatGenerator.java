@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class RestaurantFormatGenerator {
 
+    //Convert obj 2 json format string
     private static String jsonify(Object obj){
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonStr="" ;
@@ -19,7 +20,7 @@ public class RestaurantFormatGenerator {
         }
         return jsonStr;
     }
-
+    // Convert json format response
     public static RestaurantModel toModule(String json)  {
         ObjectMapper objectMapper = new ObjectMapper();
         try {

@@ -1,6 +1,7 @@
 package com.example.order2gatherBE.services;
 
 import com.example.order2gatherBE.exceptions.DataAccessException;
+import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.models.FoodModel;
 import com.example.order2gatherBE.models.RestaurantImageModel;
 import com.example.order2gatherBE.models.RestaurantModel;
@@ -33,16 +34,20 @@ public class RestaurantService {
     @Autowired
     FoodRepository foodRepository;
 
-    public int saveRestaurant(RestaurantModel restaurant) throws DataAccessException{
-        restaurantRepository.save(restaurant);
-        return  restaurantRepository.getTableSize();
+    // Save Restaurant by restaurant Model
+    public int saveRestaurant(RestaurantModel restaurant){
+        int result = restaurantRepository.save(restaurant);
+        return  restaurantRepository.getSaveRestaurantID();
     }
 
+
+    // Update Restaurant List by user ID
     public int updateRestaurant(RestaurantModel restaurant){
 
         return restaurantRepository.update(restaurant);
     }
-    public HashMap<String, Object> getRestaurantList(int userID) throws DataAccessException
+    // Get Restaurant List by user ID
+    public HashMap<String, Object> getRestaurantList(int userID)
     {
         List<RestaurantModel> listRest = restaurantRepository.findByUId(userID);
         HashMap<String, Object> objMap = new HashMap<String, Object>();
@@ -50,7 +55,7 @@ public class RestaurantService {
         return objMap;
     }
 
-    public  HashMap<String, Object> getRestaurantDetail(int rid,int uid) throws RuntimeException
+    public  HashMap<String, Object> getRestaurantDetail(int rid,int uid)
     {
         HashMap<String, Object> objMap = new HashMap<String, Object>();
 
@@ -59,15 +64,13 @@ public class RestaurantService {
         if(rest == null)
             return objMap;
         List<RestaurantImageModel> images = null;
-        System.out.println("pass");
+        //System.out.println("pass");
         if (!rest.getIsDelete())
                 // Using the upload image
                 images = restaurantImageRepository.get(rid);
 
         List<FoodModel> foods = foodRepository.getFoods(rid);
 
-        objMap.put("restaurant", rest);
-        objMap.put("food", foods);
 
         //Construct Image base64 response
         String imageformat = "[ ";
@@ -75,26 +78,31 @@ public class RestaurantService {
             imageformat += image.toString()+" ,";
         imageformat += "]";
         //Using the upload image
+
+        //Generate the response
+        objMap.put("restaurant", rest);
+        objMap.put("food", foods);
         objMap.put("menu", imageformat);
 
         return objMap;
     }
 
-
-    public void saveImage(int rid, MultipartFile images) throws DataAccessException{
+    //Save Image with restaurant ID
+    public void saveImage(int rid, MultipartFile images){
         RestaurantImageModel restaurantImageModel = new RestaurantImageModel();
         try {
             restaurantImageModel.setMenuImage(images.getBytes());
             restaurantImageModel.setRId(rid);
             String output = restaurantImageRepository.save(restaurantImageModel);
-            System.out.println("Save Image "+ output);
+            //System.out.println("Save Image "+ output);
         }catch(IOException e){
-            System.out.println("Save Image Failed!");
+            //System.out.println("Save Image Failed!");
             throw new DataAccessException(500, "Fail to transfer Byte array ", e.getMessage());
         }
     }
-
-    public int deleteRestaurant(int rid, int uid) throws DataAccessException{
+    //Delete Restaurant by restaurant ID
+    public int deleteRestaurant(int rid, int uid){
         return restaurantRepository.deleteById(rid, uid);
     }
+
 }
