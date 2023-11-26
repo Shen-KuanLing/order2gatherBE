@@ -66,7 +66,7 @@ public class OrderEventService {
     }
 
     private void validateUserPermission(Integer uid, Integer hostId) {
-        if (true) {
+        if (!uid.equals(hostId)) {
             throw new ForbiddenException("User does not have permission to update this OrderEvent.");
         }
     }
