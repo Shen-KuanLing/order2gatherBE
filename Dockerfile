@@ -8,7 +8,7 @@ COPY src ./src
 
 # RUN ./mvnw dependency:resolve # not sure about the necessity of this command 
 
-RUN ./mvnw package spring-boot:repackage
+RUN ./mvnw package spring-boot:repackage -Pci
 RUN cd target && ls
 
 CMD ["java", "-jar", "./target/order2gatherBE-0.0.1-SNAPSHOT.jar"]

@@ -78,12 +78,6 @@
 	<profiles>
 		<profile>
 			<id>ci</id>
-			<activation>
-				<property>
-					<name>env.CI</name>
-					<value>true</value>
-				</property>
-			</activation>
 			<build>
 				<!-- CI-specific configurations -->
 				<plugins>
