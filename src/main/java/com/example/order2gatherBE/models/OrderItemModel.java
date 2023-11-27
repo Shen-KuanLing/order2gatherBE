@@ -94,6 +94,10 @@ public class OrderItemModel {
         return this.comment;
     }
 
+    public void setComment(String comment){
+        this.comment=comment;
+    }
+
     // new key
     public int getFID(){
         return this.fid;
