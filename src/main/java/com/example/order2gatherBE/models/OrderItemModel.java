@@ -5,6 +5,9 @@ import org.springframework.stereotype.Component;
 
 import jakarta.validation.constraints.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 public class OrderItemModel {
     // `uid` integer NOT NULL,
@@ -53,6 +56,9 @@ public class OrderItemModel {
     public int getUID(){
         return this.uid;
     }
+    public void setUid(int uid){
+        this.uid = uid;
+    }
     public int getOID(){
         return this.oid;
     }
@@ -60,8 +66,14 @@ public class OrderItemModel {
     public String getFoodName(){
         return this.foodName;
     }
+    public void setFoodName(String foodName){
+        this.foodName = foodName;
+    }
     public String getHostViewFoodName(){
         return this.hostViewFoodName;
+    }
+    public void setHostViewFoodName(String hostViewFoodName){
+        this.hostViewFoodName = hostViewFoodName;
     }
     public int getPrice(){
         return this.price;
@@ -69,8 +81,14 @@ public class OrderItemModel {
     public int getHostViewPrice(){
         return this.hostViewPrice;
     }
+    public void setHostViewPrice(int hostViewPrice){
+        this.hostViewPrice = hostViewPrice;
+    }
     public int getNum(){
         return this.num;
+    }
+    public void setNum(int num){
+        this.num = num;
     }
     public String getComment(){
         return this.comment;
@@ -79,6 +97,16 @@ public class OrderItemModel {
     // new key
     public int getFID(){
         return this.fid;
+    }
+
+    public Map<String, Object> mapHostViewOrderItem() {
+        Map<String, Object> orderItemMap = new HashMap<>();
+        orderItemMap.put("foodName", this.foodName);
+        orderItemMap.put("hostViewFoodName", this.hostViewFoodName);
+        orderItemMap.put("hostViewPrice", this.hostViewPrice);
+        orderItemMap.put("num", this.num);
+        orderItemMap.put("comment", this.comment);
+        return orderItemMap;
     }
 
     //need this?
