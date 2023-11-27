@@ -75,7 +75,33 @@
 <!--			<scope>test</scope>-->
 <!--		</dependency>-->
 	</dependencies>
-
+	<profiles>
+		<profile>
+			<id>ci</id>
+			<activation>
+				<property>
+					<name>env.CI</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<!-- CI-specific configurations -->
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>${project.parent.version}</version>
+						<configuration>
+							<image>
+								<builder>paketobuildpacks/builder-jammy-base:latest</builder>3
+								<mainClass>com.example.order2gatherBE</mainClass>
+							</image>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<build>
 		<plugins>
 			<plugin>
