@@ -31,9 +31,9 @@ public class OrderItemModel {
     @NotNull
     private int fid;//food ID
     // private boolean isDeleted=false;
-    
+
     // set
-    public void setOrderItem(   int uid, int oid, String foodName, String hostViewFoodName, 
+    public void setOrderItem(   int uid, int oid, String foodName, String hostViewFoodName,
                                 int price, int hostViewPrice, int num, String comment,int fid){
         this.uid = uid;
         this.oid = oid;
@@ -46,7 +46,7 @@ public class OrderItemModel {
 
         // new key
         this.fid=fid;
-        
+
     }
 
     // get
@@ -75,7 +75,7 @@ public class OrderItemModel {
     public String getComment(){
         return this.comment;
     }
-    
+
     // new key
     public int getFID(){
         return this.fid;

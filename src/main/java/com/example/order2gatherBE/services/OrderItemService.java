@@ -22,17 +22,17 @@ public class OrderItemService {
     public List<Integer> getUsers(int oid){
         return orderItemRepository.getUsers(oid);
     }
-    
+
     // to add item into DB
     public void addOrderItem(OrderItemModel orderItemModel){
         orderItemRepository.addOrderItem(orderItemModel);
     }
 
-    // to modify/update item in DB 
+    // to modify/update item in DB
     public void modifyOrderItem(OrderItemModel orderItemModel){
         orderItemRepository.modifyOrderItem(orderItemModel);
     }
-    
+
     // to mark an item deleted in DB
     public void deleteOrderItem(OrderItemModel orderItemModel){
         orderItemRepository.deleteOrderItem(orderItemModel);
@@ -43,7 +43,7 @@ public class OrderItemService {
         return orderItemRepository.getUserOrderItem(uid, oid);
     }
 
-    
+
     // to get all item of an order event
     public List<OrderItemModel> getAllOrderItem(int oid){
         return orderItemRepository.getAllOrderItem(oid);
