@@ -8,6 +8,6 @@ order2gather backend code
 
 ### Client Connect
 - browser: local host  
-    http://localhost:8080/
+  http://localhost:8080/
 - command line:
-    <code>curl localhost:8080</code>
+  <code>curl localhost:8080</code>
