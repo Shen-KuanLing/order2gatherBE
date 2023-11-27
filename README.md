@@ -10,7 +10,7 @@ order2gather backend code
     ./mvnw spring-boot:run
 
 ### Pre-commit and Pre-push hooks
-This project utilizes [git build hooks](https://github.com/rudikershaw/git-build-hook) to maintain code quality:
+This project utilizes [pre-commit](https://pre-commit.com) to maintain code quality:
 
 - **Pre-commit**: Automatically formats code to ensure consistent style using tools like [spotless](https://github.com/diffplug/spotless).
 
