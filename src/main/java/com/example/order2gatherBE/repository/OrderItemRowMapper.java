@@ -19,4 +19,3 @@ public class OrderItemRowMapper implements RowMapper<OrderItemModel> {
         return orderItemModel;
     }
 }
-
