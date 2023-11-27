@@ -1,9 +1,9 @@
 package com.example.order2gatherBE.repository;
-import com.example.order2gatherBE.models.OrderItemModel;
-import org.springframework.jdbc.core.RowMapper;
 
+import com.example.order2gatherBE.models.OrderItemModel;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import org.springframework.jdbc.core.RowMapper;
 
 public class OrderItemRowMapper implements RowMapper<OrderItemModel> {
 
@@ -19,4 +19,3 @@ public class OrderItemRowMapper implements RowMapper<OrderItemModel> {
         return orderItemModel;
     }
 }
-

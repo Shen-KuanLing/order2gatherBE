@@ -1,21 +1,20 @@
 package com.example.order2gatherBE.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.example.order2gatherBE.models.GroupModel;
 import com.example.order2gatherBE.models.UserModel;
 import com.example.order2gatherBE.repository.AuthenticationRepository;
 import com.example.order2gatherBE.repository.FriendRepository;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class FriendService {
     @Autowired
     FriendRepository friendRepository;
+
     @Autowired
     AuthenticationRepository authenticationRepository;
 
@@ -59,7 +58,10 @@ public class FriendService {
     }
 
     public boolean addUsersToGroup(int uid, List<Integer> fids, int gid) {
-        if (!friendRepository.isGroupMember(uid, gid) || !friendRepository.isAllFriend(uid, fids)) {
+        if (
+            !friendRepository.isGroupMember(uid, gid) ||
+            !friendRepository.isAllFriend(uid, fids)
+        ) {
             return false;
         }
         // role = 0 means normal member

@@ -1,17 +1,19 @@
 package com.example.order2gatherBE.models;
 
 import java.sql.Timestamp;
-
 import javax.validation.constraints.NotNull;
 
 // @Entity
 // @Table(name = "user")
 public class UserModel {
     private int id;
+
     @NotNull
     private String gmail;
+
     @NotNull
     private String username;
+
     @NotNull
     private Timestamp lastLogin;
 

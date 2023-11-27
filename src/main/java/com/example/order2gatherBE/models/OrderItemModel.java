@@ -1,12 +1,10 @@
 package com.example.order2gatherBE.models;
 
-import org.springframework.boot.context.properties.bind.DefaultValue;
-import org.springframework.stereotype.Component;
-
 import jakarta.validation.constraints.NotNull;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OrderItemModel {
@@ -20,24 +18,38 @@ public class OrderItemModel {
     // `comment` varchar(255)
     @NotNull
     private int uid;
+
     @NotNull
     private int oid;
-    private String foodName="";
+
+    private String foodName = "";
+
     @NotNull
     private String hostViewFoodName;
-    private int price=0;
+
+    private int price = 0;
     private int hostViewPrice;
-    private int num=0;
-    private String comment="";
+    private int num = 0;
+    private String comment = "";
 
     // ##### do we need this cols? #####
     @NotNull
-    private int fid;//food ID
+    private int fid; //food ID
+
     // private boolean isDeleted=false;
-    
+
     // set
-    public void setOrderItem(   int uid, int oid, String foodName, String hostViewFoodName, 
-                                int price, int hostViewPrice, int num, String comment,int fid){
+    public void setOrderItem(
+        int uid,
+        int oid,
+        String foodName,
+        String hostViewFoodName,
+        int price,
+        int hostViewPrice,
+        int num,
+        String comment,
+        int fid
+    ) {
         this.uid = uid;
         this.oid = oid;
         this.foodName = foodName;
@@ -48,57 +60,68 @@ public class OrderItemModel {
         this.comment = comment;
 
         // new key
-        this.fid=fid;
-        
+        this.fid = fid;
     }
 
     // get
-    public int getUID(){
+    public int getUID() {
         return this.uid;
     }
-    public void setUid(int uid){
+
+    public void setUid(int uid) {
         this.uid = uid;
     }
-    public int getOID(){
+
+    public int getOID() {
         return this.oid;
     }
 
-    public String getFoodName(){
+    public String getFoodName() {
         return this.foodName;
     }
-    public void setFoodName(String foodName){
+
+    public void setFoodName(String foodName) {
         this.foodName = foodName;
     }
-    public String getHostViewFoodName(){
+
+    public String getHostViewFoodName() {
         return this.hostViewFoodName;
     }
-    public void setHostViewFoodName(String hostViewFoodName){
+
+    public void setHostViewFoodName(String hostViewFoodName) {
         this.hostViewFoodName = hostViewFoodName;
     }
-    public int getPrice(){
+
+    public int getPrice() {
         return this.price;
     }
-    public int getHostViewPrice(){
+
+    public int getHostViewPrice() {
         return this.hostViewPrice;
     }
-    public void setHostViewPrice(int hostViewPrice){
+
+    public void setHostViewPrice(int hostViewPrice) {
         this.hostViewPrice = hostViewPrice;
     }
-    public int getNum(){
+
+    public int getNum() {
         return this.num;
     }
-    public void setNum(int num){
+
+    public void setNum(int num) {
         this.num = num;
     }
-    public String getComment(){
+
+    public String getComment() {
         return this.comment;
     }
-    public void setComment(String comment){
+
+    public void setComment(String comment) {
         this.comment = comment;
     }
-    
+
     // new key
-    public int getFID(){
+    public int getFID() {
         return this.fid;
     }
 
@@ -111,7 +134,6 @@ public class OrderItemModel {
         orderItemMap.put("comment", this.comment);
         return orderItemMap;
     }
-
     //need this?
     // public boolean isDeleted(){
     //     return this.isDeleted;

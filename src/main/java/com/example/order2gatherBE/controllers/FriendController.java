@@ -1,14 +1,17 @@
 package com.example.order2gatherBE.controllers;
 
+import com.example.order2gatherBE.models.FriendRequest;
+import com.example.order2gatherBE.services.AuthenticationService;
+import com.example.order2gatherBE.services.FriendService;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.http.MediaType;
 import org.apache.catalina.connector.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,33 +21,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.order2gatherBE.models.FriendRequest;
-import com.example.order2gatherBE.services.AuthenticationService;
-import com.example.order2gatherBE.services.FriendService;
-
-import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping(value = "/friend", produces = MediaType.APPLICATION_JSON_VALUE)
 public class FriendController {
     @Autowired
     AuthenticationService authenticationService;
+
     @Autowired
     FriendService friendService;
 
     @PostMapping("/add")
-    public ResponseEntity<Boolean> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @Valid @RequestBody FriendRequest.Add req) {
+    public ResponseEntity<Boolean> add(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @Valid @RequestBody FriendRequest.Add req
+    ) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
-        return ResponseEntity.ok(friendService.add(uid, req.getEmail(), req.getNickname()));
+        return ResponseEntity.ok(
+            friendService.add(uid, req.getEmail(), req.getNickname())
+        );
     }
 
     @GetMapping("/get")
-    public ResponseEntity<HashMap<String, Object>> get(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+    public ResponseEntity<HashMap<String, Object>> get(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token
+    ) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
@@ -56,8 +60,10 @@ public class FriendController {
     }
 
     @GetMapping("/getGroupInfo")
-    public ResponseEntity<HashMap<String, Object>> getGroupInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @RequestParam int id) {
+    public ResponseEntity<HashMap<String, Object>> getGroupInfo(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @RequestParam int id
+    ) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
@@ -67,8 +73,10 @@ public class FriendController {
     }
 
     @PostMapping("/createGroup")
-    public ResponseEntity<Map<String, Integer>> createGroup(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @Valid @RequestBody FriendRequest.CreateGroup req) {
+    public ResponseEntity<Map<String, Integer>> createGroup(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @Valid @RequestBody FriendRequest.CreateGroup req
+    ) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
@@ -80,15 +88,20 @@ public class FriendController {
     }
 
     @PostMapping("/addUsersToGroup")
-    public ResponseEntity<Map<String, Boolean>> addUsersToGroup(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
-            @Valid @RequestBody FriendRequest.AddFriendToGroup req) {
+    public ResponseEntity<Map<String, Boolean>> addUsersToGroup(
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+        @Valid @RequestBody FriendRequest.AddFriendToGroup req
+    ) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
         HashMap<String, Boolean> res = new HashMap<String, Boolean>();
-        res.put("status", friendService.addUsersToGroup(uid, req.getFids(), req.getGid()));
+        res.put(
+            "status",
+            friendService.addUsersToGroup(uid, req.getFids(), req.getGid())
+        );
         return ResponseEntity.ok(res);
     }
 }
