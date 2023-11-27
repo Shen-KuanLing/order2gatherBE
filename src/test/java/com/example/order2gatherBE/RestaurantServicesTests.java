@@ -79,7 +79,7 @@ public class RestaurantServicesTests {
         restList.add(restModel2);
         restList.add(restModel3);
         // Get Restaurant List by user ID
-        Mockito.when(restaurantRepository.findByUId(2 )).thenReturn(restList);
+        Mockito.when(restaurantRepository.findByUId(2)).thenReturn(restList);
 
         // Because getRestaurantList -> HashMap<String, Object>
         HashMap<String, Object> results = restaurantService.getRestaurantList(2);
