@@ -53,11 +53,16 @@ public class OrderItemController {
         return new ResponseEntity<>(orderItemService.getAllOrderItem(oid),HttpStatus.OK);
     }
 
-    // overwrite the data in DB
+    // overwrite the data in DB:
+    // two condition
+        // modifier is host
+        // modifier is not host
     @PutMapping("/ordering/modify")
     public ResponseEntity<String> modifyUserOderItem(@RequestBody OrderItemModel formData){
         orderItemService.modifyOrderItem(formData);
-        return new ResponseEntity<>(("food :" + formData.getFoodName() + " modified"), HttpStatus.OK);
+        int hid=orderItemService.getHostID(formData.getOID());
+        if(hid==formData.getUID()) return new ResponseEntity<>(("Host: fid-" + formData.getFID() + " modified"), HttpStatus.OK);
+        else return new ResponseEntity<>(("Orderer: fid-" + formData.getFID() + " modified"), HttpStatus.OK);
     }
 
     // mark an item deleted in DB

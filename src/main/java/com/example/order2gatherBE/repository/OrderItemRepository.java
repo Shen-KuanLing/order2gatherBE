@@ -1,9 +1,11 @@
 package com.example.order2gatherBE.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.models.OrderItemModel;
 
 import java.util.*;
@@ -40,14 +42,26 @@ public class OrderItemRepository {
             System.out.println("cannot access member info");
             return;
         }
-        System.out.println("EXCUTE modifyOrderItem");
-        // update item: search item by uid, oid, and fid
-        jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, hostViewFoodName=?, price=?, hostViewPrice=?, num=?, comment=? "
-        +"WHERE uid=? and oid=? and fid=?",
-        item.getFoodName(), item.getHostViewFoodName(),
-        item.getPrice(), item.getHostViewPrice(),
-        item.getNum(), item.getComment(),
-        item.getUID(), item.getOID(),item.getFID());
+        int hid=getHost(item.getOID());
+        if(hid==item.getUID()){
+            System.out.println("Host EXCUTE modifyOrderItem");
+            // update all item: search item by uid, oid, and fid
+            jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, hostViewFoodName=?, price=?, hostViewPrice=?, num=?, comment=? "
+            +"WHERE uid=? and oid=? and fid=?",
+            item.getFoodName(), item.getHostViewFoodName(),
+            item.getPrice(), item.getHostViewPrice(),
+            item.getNum(), item.getComment(),
+            item.getUID(), item.getOID(),item.getFID());
+        }else{
+            System.out.println("Orderer EXCUTE modifyOrderItem");
+            // update item except for hostViewName and hostViewPrice: search item by uid, oid, and fid
+            jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, price=?, num=?, comment=? "
+            +"WHERE uid=? and oid=? and fid=?",
+            item.getFoodName(),
+            item.getPrice(),
+            item.getNum(), item.getComment(),
+            item.getUID(), item.getOID(),item.getFID());
+        }
     }
 
     // deleted item ok
@@ -63,6 +77,13 @@ public class OrderItemRepository {
         item.getUID(), item.getOID(),item.getFID());
     }
 
+    // used in modifyOrderItem
+    public int getHost(int oid){
+        // find hostID by oid through OrderEventModel
+        String sql_1 = "Select * from orderEvent where id = ?";
+        List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
+        return temp.get(0).getHostID();
+    }
     // get existed users(null rows with null string and fid=-1) ok
     public List<Integer> getUsers(int oid){
         System.out.println("EXCUTE getUsers");

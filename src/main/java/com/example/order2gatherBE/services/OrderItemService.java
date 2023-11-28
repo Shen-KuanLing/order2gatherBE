@@ -23,6 +23,10 @@ public class OrderItemService {
     public void initOrderEventMembers(int uid, int oid){
         orderItemRepository.initOrderEventMembers(uid,oid);
     }
+    // get host id
+    public int getHostID(int oid){
+        return orderItemRepository.getHost(oid);
+    }
 
     // get existing user in an order event
     public List<Integer> getUsers(int oid){
