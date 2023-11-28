@@ -77,6 +77,11 @@ public class OrderItemService {
             int uid = entry.getKey();
             List<OrderItemModel> userOrders = entry.getValue();
 
+            String username = userOrders.stream()
+                    .map(OrderItemModel::getUserName)
+                    .findFirst()
+                    .orElse(null);
+
             // Calculate total price for the user
             int userTotalPrice = userOrders.stream()
                     .mapToInt(orderItem -> orderItem.getHostViewPrice() * orderItem.getNum())
@@ -84,6 +89,7 @@ public class OrderItemService {
 
             Map<String, Object> orderMap = new HashMap<>();
             orderMap.put("uid", uid);
+            orderMap.put("username", username);
 
             List<Map<String, Object>> foodList = userOrders.stream()
                     .map(OrderItemModel::mapHostViewOrderItem)
