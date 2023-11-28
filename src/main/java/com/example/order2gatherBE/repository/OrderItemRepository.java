@@ -18,7 +18,7 @@ public class OrderItemRepository {
     public void initOrderEventMembers(int uid, int oid){
         System.out.println("EXCUTE initOrderEventMembers");
         jdbcTemplate.update("INSERT INTO userOrderFood(uid, oid, foodName, hostViewFoodName, price, hostViewPrice, num, comment, fid) "
-                            + "VALUES (?,?,?,?,?,?,?,?)", 
+                            + "VALUES (?,?,?,?,?,?,?,?)",
                             uid, oid, "", "", -1,-1, -1, "", -1);
     }
 
@@ -33,35 +33,35 @@ public class OrderItemRepository {
         }
         return uids;
     }
-    
-    // add new item 
+
+    // add new item
     public void addOrderItem(OrderItemModel item){
         System.out.println("EXCUTE addOrderItem");
         jdbcTemplate.update("INSERT INTO userOrderFood(uid, oid, foodName, hostViewFoodName, price, hostViewPrice, num, comment, fid) "
-        + "VALUES (?,?,?,?,?,?,?,?)", 
+        + "VALUES (?,?,?,?,?,?,?,?)",
         item.getUID(), item.getOID(),
         item.getFoodName(), item.getHostViewFoodName(),
         item.getPrice(), item.getHostViewPrice(),
         item.getNum(), item.getComment(), item.getFID());
     }
-    
+
     // update the Database
     public void modifyOrderItem(OrderItemModel item){
         System.out.println("EXCUTE modifyOrderItem");
         // update item: search item by uid, oid, and fid
         jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, hostViewFoodName=?, price=?, hostViewPrice=?, num=?, comment=? "
-        +"WHERE uid=? and oid=? and fid=?", 
+        +"WHERE uid=? and oid=? and fid=?",
         item.getFoodName(), item.getHostViewFoodName(),
         item.getPrice(), item.getHostViewPrice(),
         item.getNum(), item.getComment(),
         item.getUID(), item.getOID(),item.getFID());
     }
-    
+
     // deleted item
     public void deleteOrderItem(OrderItemModel item){
         System.out.println("EXCUTE markDeleted");
         jdbcTemplate.update("DELETE FROM userOrderFood "
-                            +"WHERE uid=? and oid=? and fid=?", 
+                            +"WHERE uid=? and oid=? and fid=?",
                             item.getUID(), item.getOID(),item.getFID());
     }
 
@@ -74,7 +74,7 @@ public class OrderItemRepository {
             return null;
         return orders;
     }
-    
+
     // get all order items of a order event
     public List<OrderItemModel> getAllOrderItem(int oid){
         System.out.println("EXCUTE getAllItem");

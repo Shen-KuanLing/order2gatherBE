@@ -14,17 +14,17 @@ public class ReportModel {
     private int oid;
     @NotNull
     private Timestamp time;
-    @NotNull    
+    @NotNull
     private String comment;
     // set
     public void setReport(int uid, int oid, Timestamp time, String comment) {
         this.uid=uid;
-        
+
         this.oid=oid;
         this.time=time;
         this.comment=comment;
     }
-    
+
     // get
     public int getUID(){
         return this.uid;

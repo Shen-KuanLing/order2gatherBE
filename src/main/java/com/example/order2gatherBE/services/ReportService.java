@@ -11,7 +11,7 @@ import com.example.order2gatherBE.repository.ReportRepository;
 
 @Service
 public class ReportService {
-    
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -22,10 +22,10 @@ public class ReportService {
     // send report through gmail
     public String sentReport(int userID, int orderID, String comment) {
         String systemEmail="order2getherofficial@gmail.com";
-        
+
         // retrive host email from database
         String hostEmail=reportRepo.findHostEmail(orderID);
-        
+
         try{
             // sending email
             SimpleMailMessage message=new SimpleMailMessage() ;
@@ -39,7 +39,7 @@ public class ReportService {
             System.out.println("error while sending email!\n"+e);
             return "something wrong";
         }
-        
+
         return "report recieved!";
     }
 
