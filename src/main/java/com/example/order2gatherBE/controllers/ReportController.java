@@ -23,6 +23,10 @@ import org.springframework.http.ResponseEntity;
 import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.ReportService;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
+import java.util.*;
 
 @RestController
 public class ReportController {
@@ -31,15 +35,7 @@ public class ReportController {
     ReportService reportService;
 
     @Autowired
-    ReportModel reportModel;
-
-    @Autowired
     private AuthenticationService authenticationService;
-
-    public String sentReport(int userID, int orderID, String comment) {
-        reportService.sentReport(userID, orderID,comment);
-        return "report recieved!";
-    }
 
     @PostMapping(path="/report")
     public ResponseEntity<String> receiveReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ReportModel formData) {
@@ -50,15 +46,25 @@ public class ReportController {
         }
 
         // store it into database
-        reportModel.setReport(formData.getUID(),  formData.getOID(), formData.getTimestamp(), formData.getComment());
-        reportService.addReport(reportModel);
+        reportService.addReport(formData);
 
         // activate sentReport() method
-        this.sentReport(formData.getUID(), formData.getOID(), formData.getComment());
+        reportService.sentReport(formData.getUID(), formData.getOID(), formData.getComment());
         String temp= String.format("{\"status\": \"success\", \"comment\": \" %s\"}",formData.getComment());
 
         // Return a response back to the frontend
         return new ResponseEntity<>(temp,HttpStatus.OK);
+    }
+
+    @GetMapping(path="/getReport")
+    public ResponseEntity<List<String>> getReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int uid, @RequestParam int oid ) {
+        token = token.replace("Bearer ", "");
+        int auth_uid = authenticationService.verify(token);
+        if (auth_uid == -1) {
+            return null;
+        }
+        List<String> comments=reportService.getReport(uid,oid);
+        return new ResponseEntity<>(comments,HttpStatus.OK);
     }
 
 

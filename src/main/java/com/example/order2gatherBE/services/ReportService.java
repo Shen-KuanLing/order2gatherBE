@@ -9,6 +9,7 @@ import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.repository.AuthenticationRepository;
 import com.example.order2gatherBE.repository.ReportRepository;
 
+import java.util.*;
 @Service
 public class ReportService {
 
@@ -48,4 +49,7 @@ public class ReportService {
         reportRepo.addReport(report);
     }
 
+    public List<String> getReport(int uid, int oid){
+        return reportRepo.getReport(uid, oid);
+    }
 }

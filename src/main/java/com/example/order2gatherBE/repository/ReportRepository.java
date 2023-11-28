@@ -8,9 +8,8 @@ import org.springframework.stereotype.Repository;
 import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.models.UserModel;
 import com.example.order2gatherBE.models.OrderEventModel;
-import java.util.List;
 
-
+import java.util.*;
 
 @Repository // Communicate with DB, use MYSQL
 public class ReportRepository {
@@ -39,4 +38,17 @@ public class ReportRepository {
             return null;
         return users.get(0).getGmail();
     }
+    public List<String> getReport(int uid, int oid){
+        System.out.println("EXECUTE getReport");
+        List reports = jdbcTemplate.queryForList("SELECT * FROM report WHERE uid="+uid+ " and oid=" + oid);
+        List<String> comments=new ArrayList<String>();
+        Iterator it =reports.iterator();
+        while(it.hasNext()){
+            Map reportMap=(Map)it.next();
+            comments.add((String)reportMap.get("comment"));
+        }
+        if(comments.isEmpty()) return null;
+        return comments;
+    }
+
 }
