@@ -30,9 +30,9 @@ public class AuthenticationServiceTests {
 		user1.setLastLogin(new Timestamp(new Date().getTime()));
 
 		Mockito.when(authenticationRepository.findUserbyGmail(user1.getGmail())).thenReturn(user1);
-		
+
 		String token = authenticationService.login(user1.getGmail(), user1.getUsername());
-		
+
 		// Test the jwt token is valid
 		Assertions.assertEquals(authenticationService.verify(token), user1.getId());
 
