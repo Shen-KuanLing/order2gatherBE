@@ -9,30 +9,28 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReportModel {
     @NotNull
-    private int userID;
-    @NotNull
-    private int hostID;
-    @NotNull
-    private int orderID;
+    private int uid;
+   @NotNull
+    private int oid;
     @NotNull
     private Timestamp time;
     @NotNull    
     private String comment;
     // set
     public void setReport(int uid, int oid, Timestamp time, String comment) {
-        this.userID=uid;
+        this.uid=uid;
         
-        this.orderID=oid;
+        this.oid=oid;
         this.time=time;
         this.comment=comment;
     }
     
     // get
     public int getUID(){
-        return this.userID;
+        return this.uid;
     }
     public int getOID(){
-        return this.orderID;
+        return this.oid;
     }
 
     public Timestamp getTimestamp(){

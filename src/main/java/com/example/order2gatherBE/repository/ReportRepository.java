@@ -20,15 +20,12 @@ public class ReportRepository {
     // insert report to DB
     public void addReport(ReportModel report){
 		System.out.println("EXCUTE INSERT ");
-        jdbcTemplate.update("INSERT INTO report(uid, oid, timestamp, comment) "+ "VALUES (?,?,?,?,?)", 
+        jdbcTemplate.update("INSERT INTO report(uid, oid, time, comment) "+ "VALUES (?,?,?,?)", 
                             report.getUID(), report.getOID(),report.getTimestamp(), report.getComment());
-  
     }
     
     // get gmail from database 
-    @Autowired
     public String findHostEmail(int oid) {
-        
         // find hostID by oid through OrderEventModel 
         String sql_1 = "Select * from orderEvent where id = ?";
         List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
