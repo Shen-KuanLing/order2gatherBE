@@ -14,7 +14,7 @@ public class HistoryRepository {
     private JdbcTemplate jdbcTemplate;
 
     public List<HistoryModel> getUserOrderEventHistory(Integer uid) {
-        String sql = "SELECT uof.oid, r.name AS restaurantName, u.username AS hostName, u.gmail AS hostGmail, "
+        String sql = "SELECT DISTINCT uof.oid, r.name AS restaurantName, u.username AS hostName, u.gmail AS hostGmail, "
                 + "oe.createTime, oe.stopOrderingTime, oe.endEventTime, oe.estimatedArrivalTime FROM userOrderFood uof "
                 + "JOIN orderEvent oe ON uof.oid = oe.id "
                 + "JOIN restaurant r ON oe.rid = r.id "
