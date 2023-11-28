@@ -18,14 +18,14 @@ import java.util.*;
 public class OrderItemController {
     @Autowired
     OrderItemService orderItemService;
-    
+
     // init order event member tracking (one user at a time)
     @PostMapping("/ordering/init")
     public String initOrderEventMembers(@RequestParam int uid,@RequestParam int oid ){
         orderItemService.initOrderEventMembers(uid,oid);
         return ("uid :" + Integer.toString(uid) + " added");
     }
-    
+
     // add new item to DB
     @PostMapping("/ordering/add")
     public String addUserOrderItem(@RequestBody OrderItemModel formData){
@@ -38,26 +38,26 @@ public class OrderItemController {
     public List<Integer> getUsers(@RequestParam int oid ){
         return orderItemService.getUsers(oid);
     }
-    
+
     // get all order item in an order event "of a specific user"
     @GetMapping("/ordering/getUserOrders")
     public List<OrderItemModel> getUserOrderItem(@RequestParam int uid, @RequestParam int oid){
         return orderItemService.getUserOrderItem(uid, oid);
     }
-    
+
     // get all order item in an order event
     @GetMapping("/ordering/getAllOrders")
     public List<OrderItemModel> getAllOrderItem( @RequestParam int oid){
         return orderItemService.getAllOrderItem(oid);
     }
-    
+
     // overwrite the data in DB
     @PutMapping("/ordering/modify")
     public String modifyUserOderItem(@RequestBody OrderItemModel formData){
         orderItemService.modifyOrderItem(formData);
         return "modified";
     }
-    
+
     // mark an item deleted in DB
     @DeleteMapping("/ordering/delete")
     public String deleteUserOderItem(@RequestBody OrderItemModel formData){

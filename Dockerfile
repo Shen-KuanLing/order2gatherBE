@@ -5,7 +5,7 @@ WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 COPY src ./src
-# RUN ./mvnw dependency:resolve # not sure about the necessity of this command 
+# RUN ./mvnw dependency:resolve # not sure about the necessity of this command
 RUN ./mvnw package spring-boot:repackage
 RUN cd target && ls
 
