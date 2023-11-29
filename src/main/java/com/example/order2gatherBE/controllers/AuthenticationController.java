@@ -25,10 +25,10 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<HashMap<String, String>> login(@Valid @RequestBody AuthenticationRequest.Login request) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest.Login request) {
         String jwt = authenticationService.login(request.getAccessToken());
         if (jwt == null) {
-            return (ResponseEntity<HashMap<String, String>>) ResponseEntity.badRequest();
+            return ResponseEntity.badRequest().build();
         }
         HashMap<String, String> res = new HashMap<String, String>();
         res.put("jwt", jwt);
