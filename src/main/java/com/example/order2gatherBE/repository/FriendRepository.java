@@ -96,6 +96,12 @@ public class FriendRepository {
         return friends;
     }
 
+    public List<Map<String, Object>> getUserGroup(int uid) {
+        String sql = "Select `group`.gid as gid, `group`.name as name, user2group.role role from user2group left join `group` on user2group.gid = `group`.gid where user2group.uid=?";
+        List<Map<String, Object>> groups = jdbcTemplate.queryForList(sql, uid);
+        return groups;
+    }
+
     public GroupModel getGroup(int gid) {
         String sql = "Select * from `group` where gid = ?";
         List<GroupModel> groups = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(GroupModel.class),
