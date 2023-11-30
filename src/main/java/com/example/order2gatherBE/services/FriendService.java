@@ -30,8 +30,11 @@ public class FriendService {
         return friendRepository.add(uid1, user2.getId(), user2Nickname);
     }
 
-    public List<Map<String, Object>> get(int uid) {
-        return friendRepository.getUserFriend(uid);
+    public HashMap<String, Object> get(int uid) {
+        HashMap<String, Object> res = new HashMap<String, Object>();
+        res.put("friends", friendRepository.getUserFriend(uid));
+        res.put("groups", friendRepository.getUserGroup(uid));
+        return res;
     }
 
     public HashMap<String, Object> getGroupInfo(int uid, int gid) {
