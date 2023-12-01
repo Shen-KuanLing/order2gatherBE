@@ -5,16 +5,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.order2gatherBE.models.LoginRequest;
+import com.example.order2gatherBE.models.AuthenticationRequest;
 import com.example.order2gatherBE.services.AuthenticationService;
 
 import jakarta.validation.Valid;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -26,8 +25,11 @@ public class AuthenticationController {
     AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<HashMap<String, String>> login(@Valid @RequestBody LoginRequest request) {
-        String jwt = authenticationService.login(request.getEmail(), request.getUsername());
+    public ResponseEntity<?> login(@Valid @RequestBody AuthenticationRequest.Login request) {
+        String jwt = authenticationService.login(request.getAccessToken());
+        if (jwt == null) {
+            return ResponseEntity.badRequest().build();
+        }
         HashMap<String, String> res = new HashMap<String, String>();
         res.put("jwt", jwt);
         return ResponseEntity.ok(res);
