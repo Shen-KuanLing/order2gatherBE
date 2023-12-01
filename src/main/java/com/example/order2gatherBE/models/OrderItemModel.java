@@ -96,8 +96,9 @@ public class OrderItemModel {
     public String getComment(){
         return this.comment;
     }
+
     public void setComment(String comment){
-        this.comment = comment;
+        this.comment=comment;
     }
 
     // new key
