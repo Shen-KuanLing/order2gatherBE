@@ -49,9 +49,9 @@ public class OrderEventRepository {
     }
     public int addMemberList(List<Integer> memberList, Integer oid) {
         try {
-            String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
+            String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName, fid) VALUES (?,?,?,?)";
             for (Integer memberId : memberList) {
-                jdbcTemplate.update(insertQuery, memberId, oid, "");
+                jdbcTemplate.update(insertQuery, memberId, oid, "", -1);
             }
             return 1;
         } catch (Exception e) {
