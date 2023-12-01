@@ -37,6 +37,7 @@ public class ReportController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    // send report to the host
     @PostMapping(path="/report")
     public ResponseEntity<String> receiveReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ReportModel formData) {
         token = token.replace("Bearer ", "");
@@ -50,6 +51,26 @@ public class ReportController {
 
         // activate sentReport() method
         reportService.sentReport(formData.getUID(), formData.getOID(), formData.getComment());
+        String temp= String.format("{\"status\": \"success\", \"comment\": \" %s\"}",formData.getComment());
+
+        // Return a response back to the frontend
+        return new ResponseEntity<>(temp,HttpStatus.OK);
+    }
+
+    // send notification to orderers in an order event
+    @PostMapping(path="/notify")
+    public ResponseEntity<String> notifyOrderer(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ReportModel formData) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            return new ResponseEntity<>("User doesn't have the permission.", HttpStatus.FORBIDDEN);
+        }
+
+        // store notification into database
+        reportService.addReport(formData);
+
+        // activate sentNotification() method
+        reportService.sentNotification(formData.getUID(), formData.getOID(), formData.getComment());
         String temp= String.format("{\"status\": \"success\", \"comment\": \" %s\"}",formData.getComment());
 
         // Return a response back to the frontend

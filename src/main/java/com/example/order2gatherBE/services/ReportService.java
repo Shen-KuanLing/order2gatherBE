@@ -19,10 +19,10 @@ public class ReportService {
     @Autowired
     ReportRepository reportRepo;
 
+    private String systemEmail="order2getherofficial@gmail.com";
 
     // send report through gmail
     public String sentReport(int userID, int orderID, String comment) {
-        String systemEmail="order2getherofficial@gmail.com";
 
         // retrive host email from database
         String hostEmail=reportRepo.findHostEmail(orderID);
@@ -36,6 +36,31 @@ public class ReportService {
             message.setText(comment);
             mailSender.send(message);
             System.out.println(message);
+        }catch(Exception e){
+            System.out.println("error while sending email!\n"+e);
+            return "something wrong";
+        }
+
+        return "report recieved!";
+    }
+
+    // send notification through gmail
+    public String sentNotification(int userID, int orderID, String comment) {
+
+        // retrieve orderer's emails from database through
+        List<String> ordererEmail_list=reportRepo.findOrdererGmail(orderID);
+        System.out.println(ordererEmail_list);
+        // sending email
+        try{
+            for(int i =0;i <ordererEmail_list.size();i++){
+                SimpleMailMessage message=new SimpleMailMessage() ;
+                message.setFrom(systemEmail);
+                message.setTo(ordererEmail_list.get(i));
+                message.setSubject("[ Order2Gether-OID-"+ orderID +" ]: Order Notification from host:"+userID);
+                message.setText(comment);
+                mailSender.send(message);
+                System.out.println(message);
+            }
         }catch(Exception e){
             System.out.println("error while sending email!\n"+e);
             return "something wrong";
