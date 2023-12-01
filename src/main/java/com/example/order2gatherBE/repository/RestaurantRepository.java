@@ -19,20 +19,17 @@ public class RestaurantRepository{
     private JdbcTemplate jdbcTemplate;
 
     // Get Restaurant Detail
-    public RestaurantModel getRestDetail(int restaurantID, int uid)
+    public List<RestaurantModel> getRestDetail(int restaurantID, int uid)
     {
         String sql = "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ;";
         List<RestaurantModel> restaurantList = null;
-        RestaurantModel restaurantModel = null;
         try {
             restaurantList = this.jdbcTemplate.query(sql,
                     new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), restaurantID, uid);
-            if(!restaurantList.isEmpty())
-                restaurantModel = restaurantList.get(0);
         }catch(Exception e){
             throw new DataAccessException(404, "[SQL EXCEPTION]: Get Image Failed. Please check is deleted or not. ", e.getMessage());
         }
-        return restaurantModel;
+        return restaurantList;
     }
 
     // Add Restaurant Information
@@ -50,9 +47,9 @@ public class RestaurantRepository{
 
     // Update Restaurant Information
     public int update(RestaurantModel restaurantModel) {
-        String sql = String.format("UPDATE Restaurant SET name=\"%s\", address=\"%s\", phone=\"%s\", openHour=\"%s\" WHERE id=%d AND uid=%d;",
-                    restaurantModel.getName(), restaurantModel.getAddress(), restaurantModel.getPhone(), restaurantModel.getOpenHour(),
-                    restaurantModel.getId(), restaurantModel.getUid());
+        String sql = String.format("UPDATE Restaurant SET name=\"%s\", address=\"%s\", phone=\"%s\", openHour=\"%s\" WHERE id=%d AND uid=%d AND isDelete=0;",
+                restaurantModel.getName(), restaurantModel.getAddress(), restaurantModel.getPhone(), restaurantModel.getOpenHour(),
+                restaurantModel.getId(), restaurantModel.getUid());
         try{
             return this.jdbcTemplate.update(sql);
         }catch (Exception e){
@@ -94,3 +91,4 @@ public class RestaurantRepository{
     }
 
 }
+
