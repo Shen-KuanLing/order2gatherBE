@@ -85,9 +85,10 @@ public class OrderItemRepository {
         return orders;
     }
     public List<OrderItemModel> getHostViewOrderItems(int oid) {
-        String sql = "SELECT uof.uid, uof.foodName, uof.hostViewFoodName, uof.hostViewPrice, uof.num, uof.comment " +
+        String sql = "SELECT uof.fid, uof.uid, uof.foodName, uof.hostViewFoodName, uof.price, uof.hostViewPrice, uof.num, uof.comment, user.username " +
                 "FROM userOrderFood uof " +
-                "WHERE oid = ? AND uof.foodName IS NOT NULL AND uof.hostViewPrice IS NOT NULL";
+                "JOIN user ON uof.uid = user.id " +
+                "WHERE uof.oid = ? AND uof.foodName IS NOT NULL AND uof.hostViewPrice IS NOT NULL";
         return jdbcTemplate.query(sql, new Object[]{oid}, new OrderItemRowMapper());
     }
 }
