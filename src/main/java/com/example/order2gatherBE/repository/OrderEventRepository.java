@@ -16,9 +16,9 @@ public class OrderEventRepository {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void createOrderEvent(OrderEventModel orderEventModel) {
+    public int createOrderEvent(OrderEventModel orderEventModel) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
+        int createStatus = jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO orderEvent (rid, hostId, secretcode, createTime, stopOrderingTime, estimatedArrivalTime, endEventTime, totalPrice, totalPeople, status) " +
                             "VALUES (?,?,?,?,?,?,?,?,?,?)",
@@ -37,19 +37,25 @@ public class OrderEventRepository {
             ps.setInt(10, orderEventModel.getStatus());
 
             return ps;
-        }, keyHolder);
+        }, keyHolder) > 0 ? 1 : 0;
 
         // Retrieve the DB auto generated order event id
         Integer orderEventId = keyHolder.getKey().intValue();
         orderEventModel.setId(orderEventId);
 
         // Save member uids in the userOrderFood table
-        addMemberList(orderEventModel.getMemberList(), orderEventId);
+        int addMemberStatus = addMemberList(orderEventModel.getMemberList(), orderEventId);
+        return createStatus*addMemberStatus;
     }
-    public void addMemberList(List<Integer> memberList, Integer oid) {
-        String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
-        for (Integer memberId : memberList) {
-            jdbcTemplate.update(insertQuery, memberId, oid, "");
+    public int addMemberList(List<Integer> memberList, Integer oid) {
+        try {
+            String insertQuery = "INSERT INTO userOrderFood (uid, oid, hostViewFoodName) VALUES (?,?,?)";
+            for (Integer memberId : memberList) {
+                jdbcTemplate.update(insertQuery, memberId, oid, "");
+            }
+            return 1;
+        } catch (Exception e) {
+            return 0;
         }
     }
     public OrderEventModel getOrderEventByOid(Integer oid) {
