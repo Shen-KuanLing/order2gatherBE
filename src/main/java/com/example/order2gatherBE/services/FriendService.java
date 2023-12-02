@@ -63,6 +63,7 @@ public class FriendService {
 
     public boolean addUsersToGroup(int uid, List<Integer> fids, int gid) {
         if (!friendRepository.isGroupMember(uid, gid) || !friendRepository.isAllFriend(uid, fids)) {
+            System.out.println(uid);
             return false;
         }
         // role = 0 means normal member
