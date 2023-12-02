@@ -32,7 +32,7 @@ public class FriendRepository {
     }
 
     public boolean isGroupMember(int uid, int gid) {
-        String sql = "select count(*) from user2Group where uid = ? and gid = ?";
+        String sql = "select count(*) from user2group where uid = ? and gid = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, uid, gid) > 0;
     }
 
