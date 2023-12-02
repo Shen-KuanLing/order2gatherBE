@@ -3,11 +3,16 @@ package com.example.order2gatherBE.controllers;
 import com.example.order2gatherBE.exceptions.DataAccessException;
 import com.example.order2gatherBE.exceptions.ForbiddenException;
 import com.example.order2gatherBE.exceptions.ResponseEntityException;
+import com.example.order2gatherBE.models.FoodModel;
 import com.example.order2gatherBE.models.RestaurantImageModel;
 import com.example.order2gatherBE.models.RestaurantModel;
 import com.example.order2gatherBE.services.AuthenticationService;
 import com.example.order2gatherBE.services.RestaurantService;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -28,90 +33,106 @@ public class RestaurantController {
     AuthenticationService authenticationService;
     private HashMap<String, Object> formatMap = new HashMap<>();
 
+    Map<String, Object> response = new HashMap<>();
 
     // Display Restaurant
     @GetMapping(value = "/display", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getRestaurants(
+    public ResponseEntity<?> getRestaurants(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam(value = "rid", required = false) String rid)
     {
+        response.clear();
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1)
+        if(uid == -1 ) {
+            response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": Please provided the correct jwt.}");
-
+                    .body(response);
+        }
         String message = "";
         formatMap.clear();
         // Get Restaurant Detail or List
         if (rid != null) {
-                formatMap = restaurantService.getRestaurantDetail(Integer.parseInt(rid), uid);
-                message = "Get Restaurant Detail";
+            formatMap = restaurantService.getRestaurantDetail(Integer.parseInt(rid), uid);
+            message = "Get Restaurant Detail";
         } else{
-                formatMap = restaurantService.getRestaurantList(uid);
-                message = "Get Restaurant List";
+            formatMap = restaurantService.getRestaurantList(uid);
+            message = "Get Restaurant List";
         }
-        String formatStr="";
 
         HttpStatus code = HttpStatus.OK;
+        DisplayResponse displayResponse = new DisplayResponse();
         if(formatMap.isEmpty()) {
             message = "No Restaurant Detail";
-            formatStr = generateFormat(message);
+            displayResponse.setMessage(message);
             code = HttpStatus.FORBIDDEN;
         }else {
-            formatStr = generateFormat(message, formatMap);
+            //Generate Response
+
+            displayResponse.setMessage(message);
+            if(formatMap.containsKey("menu"))
+                displayResponse.setMenu((List<String>) formatMap.get("menu"));
+
+            if(formatMap.containsKey("food"))
+                displayResponse.setFood((List<FoodModel>) formatMap.get("food"));
+            if(formatMap.containsKey("restaurant"))
+                displayResponse.setRestaurant((List<RestaurantModel>) formatMap.get("restaurant"));
         }
 
         return ResponseEntity
-                            .status(code)
-                            .body(formatStr);
+                .status(code)
+                .body(displayResponse);
     }
 
 
     // Delete the restaurant
     @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> deleteRestaurantDetail(
+    public ResponseEntity<?> deleteRestaurantDetail(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam(value = "rid")int rid) {
 
+        response.clear();
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1)
+        if(uid == -1 ) {
+            response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": Please provided the correct jwt.}");
-
+                    .body(response);
+        }
         int success = restaurantService.deleteRestaurant(rid, uid);
+        //Generate Response
         if(success == 0)
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body("{\"message\": \"Please refrain from deleting information about others' restaurants\"}");
+            response.put("message", "Please refrain from deleting information about others' restaurants");
+        else
+            response.put("message", String.format("The %s Restaurant has been deleted.", rid));
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(String.format("{\"message\":\" The %s Restaurant has been deleted.\"}", rid));
+                .body(response);
 
     }
 
     // Save Restaurant.
     @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> postRestaurantDetail(
+    public ResponseEntity<?> postRestaurantDetail(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestParam("restaurant") String rest,
             @RequestParam(value = "menu", required = false) MultipartFile[] images)
     {
+        response.clear();
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1)
+        if(uid == -1) {
+            response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": Please provided the correct jwt.}");
-
-
+                    .body(response);
+        }
         String message = "";
         List<String> fileNames = new ArrayList<String>();
 
@@ -120,36 +141,40 @@ public class RestaurantController {
 
         int rid = restaurantService.saveRestaurant(restModel);
         restModel.setId(rid);
-        System.out.println(rid);
+
         if(images != null) {
-                Arrays.asList(images).stream().forEach(image -> {
-                    restaurantService.saveImage(restModel.getId(), image);
-                    fileNames.add(image.getOriginalFilename());
-                });
+            Arrays.asList(images).stream().forEach(image -> {
+                restaurantService.saveImage(restModel.getId(), image);
+                fileNames.add(image.getOriginalFilename());
+            });
         }
         message = "Uploaded the files successfully: " + fileNames;
+
+        response.put("message", message);
         return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(String.format("{\"status\": %d, \"message\": \"%s\" }",0,  message));
+                .status(HttpStatus.CREATED)
+                .body(response);
 
     }
 
     // Update Restaurant
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,  produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> putRestaurantDetail(
+    public ResponseEntity<?> putRestaurantDetail(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @RequestParam("restaurant") String rest,
             @RequestParam(value = "menu", required = false) MultipartFile[] images)
     {
 
-
+        response.clear();
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1)
+        if(uid == -1) {
+            response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
-                    .body("{\"message\": Please provided the correct jwt.}");
+                    .body(response);
+        }
 
         //Prepare Response Format
         String message = "";
@@ -164,8 +189,8 @@ public class RestaurantController {
         HttpStatus code = HttpStatus.OK;
         if(images != null && updateCounts != 0) {
             Arrays.asList(images).stream().forEach(image -> {
-                        restaurantService.saveImage(restModel.getId(), image);
-                        fileNames.add(image.getOriginalFilename());
+                restaurantService.saveImage(restModel.getId(), image);
+                fileNames.add(image.getOriginalFilename());
             });
             message = "Update the restaurant or images successfully: " + fileNames;
         }else{
@@ -174,12 +199,29 @@ public class RestaurantController {
             else
                 message = "Update the restaurant successfully";
         }
+        response.put("message", message);
         return ResponseEntity
-                    .status(code)
-                    .body(String.format("{\"message\": \"%s\" }", message));
+                .status(code)
+                .body(response);
 
     }
 
-
-
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    class DisplayResponse{
+        String message;
+        @JsonFormat
+        List<RestaurantModel> restaurant;
+        @JsonFormat
+        List<FoodModel> food;
+        @JsonFormat
+        List<String> menu;
+        DisplayResponse(){
+            message = "";
+            restaurant = new ArrayList<>();
+            food = new ArrayList<>();
+            menu = new ArrayList<>();
+        }
+    }
 }

@@ -83,9 +83,9 @@ public class RestaurantServicesTests {
 
         // Because getRestaurantList -> HashMap<String, Object>
         HashMap<String, Object> results = restaurantService.getRestaurantList(2);
+        
 
-
-        List<RestaurantModel> resultsRest = (List<RestaurantModel>) results.get("restaurants");
+        List<RestaurantModel> resultsRest = (List<RestaurantModel>) results.get("restaurant");
         //Test List Restaurant 3
         Assertions.assertEquals(resultsRest.size() , 3);
 
