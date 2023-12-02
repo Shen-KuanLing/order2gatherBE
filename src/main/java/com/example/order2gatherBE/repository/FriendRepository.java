@@ -42,12 +42,13 @@ public class FriendRepository {
     }
 
     public boolean isAllFriend(int uid1, List<Integer> uid2List) {
-        String user2Para = uid2List.stream()
-                .map(n -> String.valueOf(n))
-                .collect(Collectors.joining(","));
         String sql = "SELECT COUNT(*) FROM friend WHERE user1 = ? AND user2 IN (?)";
-        int count = jdbcTemplate.queryForObject(sql, Integer.class, uid1, user2Para);
-        return count == uid2List.size();
+        for (int i = 0; i < uid2List.size(); i++) {
+            if (jdbcTemplate.queryForObject(sql, Integer.class, uid1, uid2List.get(i)) <= 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int createGroup(String gname) {
@@ -82,7 +83,8 @@ public class FriendRepository {
             }
         });
         for (int updateCount : updateCounts) {
-            if (updateCount <= 0) {
+            System.out.println(updateCount);
+            if (updateCount < 0) {
                 return false;
             }
         }
