@@ -62,6 +62,22 @@ public class ReportRepository {
 
         return gmail_list;
     }
+    public Dictionary<Integer,String> findOrdererGmail_Dict(int oid) {
+
+        // find userIDs by oid through OrderItemModule
+        List<Integer> uid_list= orderItemRepository.getUsers(oid);
+        System.out.println(uid_list);
+        // find user's Gmail from User Module
+        String sql_2 = "Select * from user where id = ?";
+        Dictionary<Integer,String> gmail_list = new Hashtable<>();
+        for(int i =0; i<uid_list.size();i++){
+            List<UserModel> users = jdbcTemplate.query(sql_2, new BeanPropertyRowMapper<>(UserModel.class), uid_list.get(i));
+            gmail_list.put(users.get(0).getId(),users.get(0).getGmail());
+        }
+
+        return gmail_list;
+    }
+
     // get Report of sent by an order in an order event
     public List<String> getReport(int uid, int oid){
         System.out.println("EXECUTE getReport");

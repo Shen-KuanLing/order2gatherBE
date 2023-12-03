@@ -43,8 +43,8 @@ public class ReportService {
 
         return "report recieved!";
     }
-    public List<String> findGmail(int oid) {
-        return reportRepo.findOrdererGmail(oid);
+    public Dictionary<Integer,String> findGmail(int oid) {
+        return reportRepo.findOrdererGmail_Dict(oid);
     }
     // send notification through gmail
     public String sentNotification(int userID, int orderID, String comment) {
