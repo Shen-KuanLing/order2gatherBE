@@ -2,7 +2,7 @@ name: gcp
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, gcp ]
 
 jobs:
 
