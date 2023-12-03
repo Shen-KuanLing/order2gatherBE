@@ -77,4 +77,10 @@ public class ReportService {
     public List<String> getReport(int uid, int oid){
         return reportRepo.getReport(uid, oid);
     }
+
+    // get all report
+    public List<ReportModel> getAllReport(int oid){
+        return reportRepo.getAllReport(oid);
+    }
+
 }

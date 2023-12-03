@@ -77,7 +77,7 @@ public class ReportController {
         return new ResponseEntity<>(temp,HttpStatus.OK);
     }
 
-    @GetMapping(path="/getReport")
+    @GetMapping(path="/getUserReport")
     public ResponseEntity<List<String>> getReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int uid, @RequestParam int oid ) {
         token = token.replace("Bearer ", "");
         int auth_uid = authenticationService.verify(token);
@@ -88,6 +88,17 @@ public class ReportController {
         return new ResponseEntity<>(comments,HttpStatus.OK);
     }
 
+    // get all report in an order event
+    @GetMapping(path="/getAllReport")
+    public ResponseEntity<List<ReportModel>> getAllReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int oid ) {
+        token = token.replace("Bearer ", "");
+        int auth_uid = authenticationService.verify(token);
+        if (auth_uid == -1) {
+            return null;
+        }
+        List<ReportModel> reportList=reportService.getAllReport(oid);
+        return new ResponseEntity<>(reportList,HttpStatus.OK);
+    }
 
 
 }

@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import com.example.order2gatherBE.models.ReportModel;
 import com.example.order2gatherBE.models.UserModel;
 import com.example.order2gatherBE.models.OrderEventModel;
-
+import com.example.order2gatherBE.models.OrderItemModel;
 import com.example.order2gatherBE.repository.OrderItemRepository;
+
+import java.security.Timestamp;
 import java.util.*;
 
 @Repository // Communicate with DB, use MYSQL
@@ -70,6 +72,29 @@ public class ReportRepository {
         }
         if(comments.isEmpty()) return null;
         return comments;
+    }
+
+    // get Report of sent by an order in an order event
+    public List<ReportModel> getAllReport(int oid){
+        System.out.println("EXECUTE getAllReport");
+        List reports = jdbcTemplate.queryForList("SELECT * FROM report WHERE oid=" + oid);
+        List<ReportModel> reportList=new ArrayList<ReportModel>();
+
+        Iterator it =reports.iterator();
+        while(it.hasNext()){
+            Map itemMap=(Map)it.next();
+
+            ReportModel temp= new ReportModel();
+            temp.setReport(
+                (int)itemMap.get("uid"),
+                (int)itemMap.get("oid"),
+                (Timestamp)itemMap.get("time"),
+                (String)itemMap.get("comment"));
+            reportList.add(temp);
+            // System.out.println(temp.getUID()+(String)temp.getFoodName());
+        }
+        return  reportList;
+
     }
 
 }
