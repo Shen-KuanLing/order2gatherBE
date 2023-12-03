@@ -112,6 +112,34 @@ public class RestaurantController {
                 .body(response);
 
     }
+    @DeleteMapping(value = "/deleteFood", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteFood(
+            @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @RequestParam(value = "rid")int rid,
+            @RequestParam(value = "fid")int foodId) {
+
+        response.clear();
+        //Authorized
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if(uid == -1 ) {
+            response.put("message", "Please provided the correct jwt");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(response);
+        }
+        int success = restaurantService.deleteFood(rid, foodId);
+        //Generate Response
+        if(success == 0)
+            response.put("message", "Please refrain from deleting information about others' foods.");
+        else
+            response.put("message", String.format("The %s food has been deleted.", rid));
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
+
+    }
 
     // Save Restaurant.
     @PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)
@@ -125,7 +153,7 @@ public class RestaurantController {
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1) {
+        if(uid == -1 ) {
             response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)

@@ -60,4 +60,12 @@ public class FoodRepository {
             throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to save foods", e.getMessage());
         }
     }
+    public int deleteById(int restaurantId , int fid) {
+        String sql = "DELETE FROM food WHERE id = ? and rid = ?";
+        try{
+            return this.jdbcTemplate.update(sql, new Object[] {fid, restaurantId });
+        }catch(Exception e){
+            throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to delete Restaurant by food id and restaurant id", e.getMessage());
+        }
+    }
 }

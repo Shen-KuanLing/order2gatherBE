@@ -1,11 +1,13 @@
 package com.example.order2gatherBE.util;
 import com.example.order2gatherBE.exceptions.ResponseEntityException;
 import com.example.order2gatherBE.models.FoodModel;
+import com.example.order2gatherBE.models.RestaurantImageModel;
 import com.example.order2gatherBE.models.RestaurantModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 public class RestaurantFormatGenerator {
 
     // Convert json format response
@@ -25,6 +27,7 @@ public class RestaurantFormatGenerator {
             throw new ResponseEntityException("Failed to build Request Entity", e.getMessage());
         }
     }
+
 
 }
 

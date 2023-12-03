@@ -117,6 +117,9 @@ public class RestaurantService {
     public int deleteRestaurant(int rid, int uid){
         return restaurantRepository.deleteById(rid, uid);
     }
+    public int deleteFood(int rid, int fid){
+        return foodRepository.deleteById(rid, fid);
+    }
 
 }
 
