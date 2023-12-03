@@ -97,7 +97,16 @@ public class ReportController {
         List<String> comments=reportService.getReport(uid,oid);
         return new ResponseEntity<>(comments,HttpStatus.OK);
     }
+    @GetMapping(path="/getGmail")
+    public ResponseEntity<List<String>> getGmail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int oid ) {
+        token = token.replace("Bearer ", "");
+        int auth_uid = authenticationService.verify(token);
+        if (auth_uid == -1) {
+            return null;
+        }
+        return new ResponseEntity<>(reportService.findGmail(oid),HttpStatus.OK);
 
+    }
     // get all report in an order event
     @GetMapping(path="/getAllReport")
     public ResponseEntity<List<ReportModel>> getAllReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int hid ) {

@@ -43,7 +43,9 @@ public class ReportService {
 
         return "report recieved!";
     }
-
+    public List<String> findGmail(int oid) {
+        return reportRepo.findOrdererGmail(oid);
+    }
     // send notification through gmail
     public String sentNotification(int userID, int orderID, String comment) {
 
