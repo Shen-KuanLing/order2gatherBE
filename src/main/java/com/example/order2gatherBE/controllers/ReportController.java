@@ -20,8 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.models.ReportModel;
+import com.example.order2gatherBE.repository.ReportRepository;
 import com.example.order2gatherBE.services.AuthenticationService;
+import com.example.order2gatherBE.services.OrderEventService;
 import com.example.order2gatherBE.services.ReportService;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -33,6 +36,13 @@ public class ReportController {
 
     @Autowired
     ReportService reportService;
+
+    @Autowired
+    ReportRepository reportRepository;
+
+    @Autowired
+    OrderEventService orderEventService;
+
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -90,13 +100,29 @@ public class ReportController {
 
     // get all report in an order event
     @GetMapping(path="/getAllReport")
-    public ResponseEntity<List<ReportModel>> getAllReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int oid ) {
+    public ResponseEntity<List<ReportModel>> getAllReport(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int hid ) {
         token = token.replace("Bearer ", "");
         int auth_uid = authenticationService.verify(token);
         if (auth_uid == -1) {
             return null;
         }
-        List<ReportModel> reportList=reportService.getAllReport(oid);
+        // get oidList of hid
+        List<OrderEventModel> orderEventList= orderEventService.getOrderEventByUid(hid);
+        List<Integer> oidList=new ArrayList<Integer>();
+        System.out.println(orderEventList.size());
+
+        for(int i =0;i<orderEventList.size();i++){
+            System.out.println(orderEventList.get(i).getId());
+            if(hid==orderEventList.get(i).getHostID())
+                oidList.add(orderEventList.get(i).getId());
+        }
+
+        // get all report
+        List<ReportModel> reportList=new ArrayList<ReportModel>();
+        for(int i =0;i<oidList.size();i++){
+            reportList.addAll(reportService.getAllReport(oidList.get(i)));
+        }
+
         return new ResponseEntity<>(reportList,HttpStatus.OK);
     }
 

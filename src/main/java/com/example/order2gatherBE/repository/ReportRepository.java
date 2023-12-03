@@ -28,13 +28,15 @@ public class ReportRepository {
         jdbcTemplate.update("INSERT INTO report(uid, oid, time, comment) "+ "VALUES (?,?,?,?)",
                             report.getUID(), report.getOID(),report.getTimestamp(), report.getComment());
     }
-
+    public int getHostID(int oid){
+        String sql_1 = "Select * from orderEvent where id = ?";
+        List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
+        return temp.get(0).getHostID();
+    }
     // get gmail from database
     public String findHostEmail(int oid) {
         // find hostID by oid through OrderEventModel
-        String sql_1 = "Select * from orderEvent where id = ?";
-        List<OrderEventModel> temp = jdbcTemplate.query(sql_1 , new BeanPropertyRowMapper<>(OrderEventModel.class), oid);
-        int hid=temp.get(0).getHostID();
+        int hid=getHostID(oid);
 
         // find host's Gmail
         String sql_2 = "Select * from user where id = ?";
@@ -88,7 +90,7 @@ public class ReportRepository {
             temp.setReport(
                 (int)itemMap.get("uid"),
                 (int)itemMap.get("oid"),
-                (Timestamp)itemMap.get("time"),
+                (String)itemMap.get("time"),
                 (String)itemMap.get("comment"));
             reportList.add(temp);
             // System.out.println(temp.getUID()+(String)temp.getFoodName());

@@ -1,6 +1,6 @@
 package com.example.order2gatherBE.models;
 
-import java.security.Timestamp;
+// import java.security.Timestamp;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,11 +13,11 @@ public class ReportModel {
    @NotNull
     private int oid;
     @NotNull
-    private Timestamp time;
+    private String time;
     @NotNull
     private String comment;
     // set
-    public void setReport(int uid, int oid, Timestamp time, String comment) {
+    public void setReport(int uid, int oid, String time, String comment) {
         this.uid=uid;
 
         this.oid=oid;
@@ -33,7 +33,7 @@ public class ReportModel {
         return this.oid;
     }
 
-    public Timestamp getTimestamp(){
+    public String getTimestamp(){
         return this.time;
     }
 
