@@ -40,14 +40,21 @@ public class OrderItemController {
 
     // add new item to DB
     @PostMapping("/ordering/add")
-    public ResponseEntity<String> addUserOrderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,@RequestBody OrderItemModel formData){
+    public ResponseEntity<String> addUserOrderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody List<OrderItemModel> formData){
         token = token.replace("Bearer ", "");
         int auth_uid = authenticationService.verify(token);
         if(auth_uid == -1) {
             return new ResponseEntity<>("message User doesn't have the permission.", HttpStatus.FORBIDDEN);
         }
-        orderItemService.addOrderItem(formData);
-        return new ResponseEntity<>(("food :" + formData.getFoodName() + " added"), HttpStatus.OK);
+        List<OrderItemModel> lastOrder=orderItemService.getUserOrderItem(formData.get(0).getUID(),formData.get(0).getOID());
+
+        for(int i=0;i<lastOrder.size();i++)
+            orderItemService.deleteOrderItem(lastOrder.get(i));
+
+        for(int i=0;i<formData.size();i++)
+            orderItemService.addOrderItem(formData.get(i));
+
+        return new ResponseEntity<>(("food : added"), HttpStatus.OK);
     }
 
     // get all existing users in and order event
