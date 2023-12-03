@@ -1,5 +1,6 @@
 package com.example.order2gatherBE.util;
 import com.example.order2gatherBE.exceptions.ResponseEntityException;
+import com.example.order2gatherBE.models.FoodModel;
 import com.example.order2gatherBE.models.RestaurantModel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,6 +13,14 @@ public class RestaurantFormatGenerator {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(json, RestaurantModel.class);
+        }catch (Exception e) {
+            throw new ResponseEntityException("Failed to build Request Entity", e.getMessage());
+        }
+    }
+    public static FoodModel[] toFood(String json,int  rid)  {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(json, FoodModel[].class);
         }catch (Exception e) {
             throw new ResponseEntityException("Failed to build Request Entity", e.getMessage());
         }

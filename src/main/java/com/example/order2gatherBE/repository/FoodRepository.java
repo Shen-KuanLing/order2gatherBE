@@ -36,7 +36,7 @@ public class FoodRepository {
     // Not use it
     public String save(List<FoodModel> foods){
 
-        String sql = "Insert * FROM food(rid, name, price) VALUES (?, ?, ?)  ";
+        String sql = "Insert INTO food(rid, name, price) VALUES (?, ?, ?)  ";
         try {
             this.jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override
@@ -56,6 +56,7 @@ public class FoodRepository {
             });
             return "Success";
         }catch (Exception e){
+            e.printStackTrace(System.out);
             throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to save foods", e.getMessage());
         }
     }

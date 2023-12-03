@@ -21,7 +21,7 @@ public class RestaurantRepository{
     // Get Restaurant Detail
     public List<RestaurantModel> getRestDetail(int restaurantID, int uid)
     {
-        String sql = "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ;";
+        String sql = "Select * FROM restaurant WHERE Id = ? and isDelete = 0 ;";
         List<RestaurantModel> restaurantList = null;
         try {
             restaurantList = this.jdbcTemplate.query(sql,

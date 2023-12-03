@@ -56,6 +56,8 @@ public class RestaurantService {
         return objMap;
     }
 
+
+
     public  HashMap<String, Object> getRestaurantDetail(int rid,int uid)
     {
         HashMap<String, Object> objMap = new HashMap<String, Object>();
@@ -71,7 +73,6 @@ public class RestaurantService {
             images = restaurantImageRepository.get(rid);
 
         List<FoodModel> foods = foodRepository.getFoods(rid);
-
 
         //Construct Image base64 response
         List<String> imageformat = new ArrayList<>();
@@ -101,6 +102,17 @@ public class RestaurantService {
             throw new DataAccessException(500, "Fail to transfer Byte array ", e.getMessage());
         }
     }
+
+    public void savefoods(List<FoodModel> foods){
+        try {
+            foodRepository.save(foods);
+            //System.out.println("Save Image "+ output);
+        }catch(Exception e){
+            //System.out.println("Save Image Failed!");
+            throw new DataAccessException(500, "Fail to save foods ", e.getMessage());
+        }
+    }
+
     //Delete Restaurant by restaurant ID
     public int deleteRestaurant(int rid, int uid){
         return restaurantRepository.deleteById(rid, uid);

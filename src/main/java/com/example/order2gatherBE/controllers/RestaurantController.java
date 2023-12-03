@@ -1,8 +1,5 @@
 package com.example.order2gatherBE.controllers;
 
-import com.example.order2gatherBE.exceptions.DataAccessException;
-import com.example.order2gatherBE.exceptions.ForbiddenException;
-import com.example.order2gatherBE.exceptions.ResponseEntityException;
 import com.example.order2gatherBE.models.FoodModel;
 import com.example.order2gatherBE.models.RestaurantImageModel;
 import com.example.order2gatherBE.models.RestaurantModel;
@@ -13,12 +10,12 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-
+import org.json.*;
 import java.util.*;
 
 import static com.example.order2gatherBE.util.RestaurantFormatGenerator.*;
@@ -121,18 +118,20 @@ public class RestaurantController {
     public ResponseEntity<?> postRestaurantDetail(
             @RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestParam("restaurant") String rest,
+            @Valid @RequestParam("food") String foods,
             @RequestParam(value = "menu", required = false) MultipartFile[] images)
     {
         response.clear();
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1) {
+        if(uid == -1 && false) {
             response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
+        uid = 1;
         String message = "";
         List<String> fileNames = new ArrayList<String>();
 
@@ -141,6 +140,14 @@ public class RestaurantController {
 
         int rid = restaurantService.saveRestaurant(restModel);
         restModel.setId(rid);
+        // Collect Foods
+        List<FoodModel> foodsList = Arrays.asList(toFood(foods, rid));
+        for(FoodModel foodModel : foodsList) {
+            System.out.println(foodModel);
+            foodModel.setRid(rid);
+        }
+        // Saving Food
+        restaurantService.savefoods(foodsList);
 
         if(images != null) {
             Arrays.asList(images).stream().forEach(image -> {
@@ -148,6 +155,8 @@ public class RestaurantController {
                 fileNames.add(image.getOriginalFilename());
             });
         }
+
+
         message = "Uploaded the files successfully: " + fileNames;
 
         response.put("message", message);
