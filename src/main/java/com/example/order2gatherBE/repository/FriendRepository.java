@@ -41,6 +41,16 @@ public class FriendRepository {
         return jdbcTemplate.queryForObject(sql, Integer.class, uid1, uid2) > 0;
     }
 
+    public boolean deleteFriend(int uid1, int uid2) {
+        String sql = "Delete from friend where user1 = ? and user2 = ?";
+        return jdbcTemplate.update(sql, uid1, uid2) > 0;
+    }
+
+    public boolean removeUserFromGroup(int uid, int gid) {
+        String sql = "Delete from `user2group` where uid = ? and gid = ?";
+        return jdbcTemplate.update(sql, uid, gid) > 0;
+    }
+
     public boolean isAllFriend(int uid1, List<Integer> uid2List) {
         String sql = "SELECT COUNT(*) FROM friend WHERE user1 = ? AND user2 IN (?)";
         for (int i = 0; i < uid2List.size(); i++) {
