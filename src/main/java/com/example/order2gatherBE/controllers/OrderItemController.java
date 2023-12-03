@@ -83,23 +83,32 @@ public class OrderItemController {
         return new ResponseEntity<>(orderItemService.getAllOrderItem(oid),HttpStatus.OK);
     }
 
-    // overwrite the data in DB:
-    // two condition
-        // modifier is host
-        // modifier is not host
-    @PutMapping("/ordering/modify")
-    public ResponseEntity<String> modifyUserOderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderItemModel formData){
+    // modifier is host
+    @PutMapping("/ordering/modify/host")
+    public ResponseEntity<String> hostModifyUserOderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderItemModel formData){
         token = token.replace("Bearer ", "");
         int auth_uid = authenticationService.verify(token);
         if(auth_uid == -1) {
             return new ResponseEntity<>("message User doesn't have the permission.", HttpStatus.FORBIDDEN);
         }
-        orderItemService.modifyOrderItem(formData);
-        int hid=orderItemService.getHostID(formData.getOID());
-        if(hid==formData.getUID()) return new ResponseEntity<>(("Host: fid-" + formData.getFID() + " modified"), HttpStatus.OK);
-        else return new ResponseEntity<>(("Orderer: fid-" + formData.getFID() + " modified"), HttpStatus.OK);
+        orderItemService.hostModifyOrderItem(formData);
+        return new ResponseEntity<>(("Host modify: uid-"+formData.getUID()+" fid-" + formData.getFID() + " modified"), HttpStatus.OK);
     }
 
+    // modifier is orderer
+    @PutMapping("/ordering/modify/orderer")
+    public ResponseEntity<String> userModifyUserOderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderItemModel formData){
+        token = token.replace("Bearer ", "");
+        int auth_uid = authenticationService.verify(token);
+        if(auth_uid == -1) {
+            return new ResponseEntity<>("message User doesn't have the permission.", HttpStatus.FORBIDDEN);
+        }
+        if(auth_uid!=formData.getUID())
+            return new ResponseEntity<>("User doesn't have the permission to modify other's food item", HttpStatus.FORBIDDEN);
+
+        orderItemService.userModifyOrderItem(formData);
+        return new ResponseEntity<>(("Orderer modify: fid-" + formData.getFID() + " modified"), HttpStatus.OK);
+    }
     // mark an item deleted in DB
     @DeleteMapping("/ordering/delete")
     public ResponseEntity<String> deleteUserOderItem(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody OrderItemModel formData){

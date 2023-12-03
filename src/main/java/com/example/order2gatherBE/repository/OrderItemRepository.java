@@ -35,35 +35,38 @@ public class OrderItemRepository {
         item.getNum(), item.getComment(), item.getFID());
     }
 
-    // update the Database ok
-    public void modifyOrderItem(OrderItemModel item){
+    // orderer update the Database ok
+    public void userModifyOrderItem(OrderItemModel item){
         if(item.getFID()==-1)
         {
             System.out.println("cannot access member info");
             return;
         }
-        int hid=getHost(item.getOID());
-        if(hid==item.getUID()){
-            System.out.println("Host EXCUTE modifyOrderItem");
-            // update all item: search item by uid, oid, and fid
-            jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, hostViewFoodName=?, price=?, hostViewPrice=?, num=?, comment=? "
-            +"WHERE uid=? and oid=? and fid=?",
-            item.getFoodName(), item.getHostViewFoodName(),
-            item.getPrice(), item.getHostViewPrice(),
-            item.getNum(), item.getComment(),
-            item.getUID(), item.getOID(),item.getFID());
-        }else{
-            System.out.println("Orderer EXCUTE modifyOrderItem");
-            // update item except for hostViewName and hostViewPrice: search item by uid, oid, and fid
-            jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, price=?, num=?, comment=? "
-            +"WHERE uid=? and oid=? and fid=?",
-            item.getFoodName(),
-            item.getPrice(),
-            item.getNum(), item.getComment(),
-            item.getUID(), item.getOID(),item.getFID());
-        }
-    }
+        // update item except for hostViewName and hostViewPrice: search item by uid, oid, and fid
+        System.out.println("Orderer EXCUTE modifyOrderItem");
+        jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, price=?, num=?, comment=? "
+        +"WHERE uid=? and oid=? and fid=?",
+        item.getFoodName(),
+        item.getPrice(),
+        item.getNum(), item.getComment(),
+        item.getUID(), item.getOID(),item.getFID());
 
+    }
+    public void hostModifyOrderItem(OrderItemModel item){
+        if(item.getFID()==-1)
+        {
+            System.out.println("cannot access member info");
+            return;
+        }
+        // update all item: search item by uid, oid, and fid
+        System.out.println("Host EXCUTE modifyOrderItem");
+        jdbcTemplate.update("UPDATE userOrderFood SET foodName=?, hostViewFoodName=?, price=?, hostViewPrice=?, num=?, comment=? "
+        +"WHERE uid=? and oid=? and fid=?",
+        item.getFoodName(), item.getHostViewFoodName(),
+        item.getPrice(), item.getHostViewPrice(),
+        item.getNum(), item.getComment(),
+        item.getUID(), item.getOID(),item.getFID());
+    }
     // deleted item ok
     public void deleteOrderItem(OrderItemModel item){
         if(item.getFID()==-1)

@@ -39,8 +39,11 @@ public class OrderItemService {
     }
 
     // to modify/update item in DB
-    public void modifyOrderItem(OrderItemModel orderItemModel){
-        orderItemRepository.modifyOrderItem(orderItemModel);
+    public void hostModifyOrderItem(OrderItemModel orderItemModel){
+        orderItemRepository.hostModifyOrderItem(orderItemModel);
+    }
+    public void userModifyOrderItem(OrderItemModel orderItemModel){
+        orderItemRepository.userModifyOrderItem(orderItemModel);
     }
 
     // to mark an item deleted in DB
