@@ -125,13 +125,12 @@ public class RestaurantController {
         //Authorized
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
-        if(uid == -1 && false) {
+        if(uid == -1) {
             response.put("message", "Please provided the correct jwt");
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(response);
         }
-        uid = 1;
         String message = "";
         List<String> fileNames = new ArrayList<String>();
 
@@ -214,6 +213,7 @@ public class RestaurantController {
                 .body(response);
 
     }
+
 
     @Getter
     @Setter

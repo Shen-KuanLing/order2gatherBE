@@ -25,7 +25,7 @@ public class RestaurantRepository{
         List<RestaurantModel> restaurantList = null;
         try {
             restaurantList = this.jdbcTemplate.query(sql,
-                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), restaurantID, uid);
+                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), restaurantID);
         }catch(Exception e){
             throw new DataAccessException(404, "[SQL EXCEPTION]: Get Image Failed. Please check is deleted or not. ", e.getMessage());
         }
