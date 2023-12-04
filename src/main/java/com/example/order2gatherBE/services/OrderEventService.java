@@ -20,10 +20,10 @@ public class OrderEventService {
     @Autowired
     OrderEventRepository orderEventRepository;
 
-    public void createOrderEvent(OrderEventModel orderEventModel) {
+    public int createOrderEvent(OrderEventModel orderEventModel) {
         validateOrderEventModel(orderEventModel);
         generateAndSetSecretCode(orderEventModel);
-        orderEventRepository.createOrderEvent(orderEventModel);
+        return orderEventRepository.createOrderEvent(orderEventModel);
     }
     public OrderEventModel getOrderEventByOid(Integer oid) {
         return orderEventRepository.getOrderEventByOid(oid);

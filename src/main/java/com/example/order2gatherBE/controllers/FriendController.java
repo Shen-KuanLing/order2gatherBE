@@ -33,14 +33,42 @@ public class FriendController {
     FriendService friendService;
 
     @PostMapping("/add")
-    public ResponseEntity<Boolean> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+    public ResponseEntity<HashMap<String, Boolean>> add(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
             @Valid @RequestBody FriendRequest.Add req) {
         token = token.replace("Bearer ", "");
         int uid = authenticationService.verify(token);
         if (uid == -1) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
-        return ResponseEntity.ok(friendService.add(uid, req.getEmail(), req.getNickname()));
+        HashMap<String, Boolean> res = new HashMap<String, Boolean>();
+        res.put("status", friendService.add(uid, req.getEmail(), req.getNickname()));
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<HashMap<String, Boolean>> delete(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @Valid @RequestBody FriendRequest.Delete req) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+        HashMap<String, Boolean> res = new HashMap<String, Boolean>();
+        res.put("status", friendService.delete(uid, req.getFid()));
+        return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/removeUserFromGroup")
+    public ResponseEntity<HashMap<String, Boolean>> removeUserFromGroup(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+            @Valid @RequestBody FriendRequest.RemoveUserFromGroup req) {
+        token = token.replace("Bearer ", "");
+        int uid = authenticationService.verify(token);
+        if (uid == -1) {
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+        HashMap<String, Boolean> res = new HashMap<String, Boolean>();
+        res.put("status", friendService.removeUserFromGroup(uid, req.getFid(), req.getGid()));
+        return ResponseEntity.ok(res);
     }
 
     @GetMapping("/get")
@@ -50,9 +78,7 @@ public class FriendController {
         if (uid == -1) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         }
-        HashMap<String, Object> res = new HashMap<String, Object>();
-        res.put("friend", friendService.get(uid));
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(friendService.get(uid));
     }
 
     @GetMapping("/getGroupInfo")

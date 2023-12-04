@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -51,7 +52,7 @@ public class RestaurantService {
     {
         List<RestaurantModel> listRest = restaurantRepository.findByUId(userID);
         HashMap<String, Object> objMap = new HashMap<String, Object>();
-        objMap.put("restaurants", listRest);
+        objMap.put("restaurant", listRest);
         return objMap;
     }
 
@@ -59,24 +60,24 @@ public class RestaurantService {
     {
         HashMap<String, Object> objMap = new HashMap<String, Object>();
 
-        RestaurantModel rest = restaurantRepository.getRestDetail(rid, uid);
+        List<RestaurantModel> rest = restaurantRepository.getRestDetail(rid, uid);
         // Null return empty map
-        if(rest == null)
+        if(rest == null || rest.isEmpty())
             return objMap;
         List<RestaurantImageModel> images = null;
-        //System.out.println("pass");
-        if (!rest.getIsDelete())
-                // Using the upload image
-                images = restaurantImageRepository.get(rid);
+
+        if (!rest.isEmpty() && !rest.get(0).getIsDelete())
+            // Using the upload image
+            images = restaurantImageRepository.get(rid);
 
         List<FoodModel> foods = foodRepository.getFoods(rid);
 
 
         //Construct Image base64 response
-        String imageformat = "[ ";
+        List<String> imageformat = new ArrayList<>();
         for(RestaurantImageModel image: images)
-            imageformat += image.toString()+" ,";
-        imageformat += "]";
+            imageformat.add(image.toString());
+
         //Using the upload image
 
         //Generate the response
@@ -106,3 +107,4 @@ public class RestaurantService {
     }
 
 }
+

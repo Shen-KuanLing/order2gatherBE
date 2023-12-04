@@ -34,7 +34,7 @@ public class OrderItemModel {
     @NotNull
     private int fid;//food ID
     // private boolean isDeleted=false;
-
+    private String username;
     // set
     public void setOrderItem(   int uid, int oid, String foodName, String hostViewFoodName,
                                 int price, int hostViewPrice, int num, String comment,int fid){
@@ -78,6 +78,9 @@ public class OrderItemModel {
     public int getPrice(){
         return this.price;
     }
+    public void setPrice(int price){
+        this.price = price;
+    }
     public int getHostViewPrice(){
         return this.hostViewPrice;
     }
@@ -93,19 +96,31 @@ public class OrderItemModel {
     public String getComment(){
         return this.comment;
     }
+
     public void setComment(String comment){
-        this.comment = comment;
+        this.comment=comment;
     }
 
     // new key
     public int getFID(){
         return this.fid;
     }
+    public void setFID(int fid){
+        this.fid = fid;
+    }
+    public String getUserName() {
+        return this.username;
+    }
+    public void setUserName(String username) {
+        this.username = username;
+    }
 
     public Map<String, Object> mapHostViewOrderItem() {
         Map<String, Object> orderItemMap = new HashMap<>();
+        orderItemMap.put("fid", this.fid);
         orderItemMap.put("foodName", this.foodName);
         orderItemMap.put("hostViewFoodName", this.hostViewFoodName);
+        orderItemMap.put("price", this.price);
         orderItemMap.put("hostViewPrice", this.hostViewPrice);
         orderItemMap.put("num", this.num);
         orderItemMap.put("comment", this.comment);
