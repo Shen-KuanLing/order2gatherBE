@@ -27,6 +27,9 @@ public class OrderItemRepository {
     // add new item ok
     public void addOrderItem(OrderItemModel item){
         System.out.println("EXCUTE addOrderItem");
+        if(item.getHostViewFoodName()==null){
+            item.setHostViewFoodName(item.getFoodName());
+        }
         jdbcTemplate.update("INSERT INTO userOrderFood(uid, oid, foodName, hostViewFoodName, price, hostViewPrice, num, comment, fid) "
         + "VALUES (?,?,?,?, ?,?,?,?,?)",
         item.getUID(), item.getOID(),

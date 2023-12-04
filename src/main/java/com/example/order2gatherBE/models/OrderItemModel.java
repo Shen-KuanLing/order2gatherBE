@@ -24,7 +24,7 @@ public class OrderItemModel {
     private int oid;
     private String foodName="";
     @NotNull
-    private String hostViewFoodName;
+    private String hostViewFoodName="";
     private int price=0;
     private int hostViewPrice;
     private int num=0;
