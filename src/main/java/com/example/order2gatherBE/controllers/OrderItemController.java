@@ -47,9 +47,11 @@ public class OrderItemController {
             return new ResponseEntity<>("message User doesn't have the permission.", HttpStatus.FORBIDDEN);
         }
         List<OrderItemModel> lastOrder=orderItemService.getUserOrderItem(formData.get(0).getUID(),formData.get(0).getOID());
-
-        for(int i=0;i<lastOrder.size();i++)
+        if(!lastOrder.isEmpty()){
+            for(int i=0;i<lastOrder.size();i++)
             orderItemService.deleteOrderItem(lastOrder.get(i));
+        }
+
 
         for(int i=0;i<formData.size();i++)
             orderItemService.addOrderItem(formData.get(i));
