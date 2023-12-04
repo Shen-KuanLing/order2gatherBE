@@ -69,9 +69,10 @@ public class OrderEventRepository {
         }
     }
     public List<OrderEventModel> getOrderEventByUid(Integer uid) {
-        String sql = "SELECT oe.*, (SELECT r.name FROM restaurant r WHERE r.id = oe.rid) AS restaurantName "
+        String sql = "SELECT oe.*, (SELECT r.name FROM restaurant r WHERE r.id = oe.rid) AS restaurantName, u.gmail AS hostGmail "
                 + "FROM orderEvent oe "
                 + "JOIN userOrderFood uof ON oe.id = uof.oid "
+                + "JOIN user u ON oe.hostId = u.id "
                 + "WHERE uof.uid = ?";
         try {
             return jdbcTemplate.query(sql, new Object[]{uid}, new OrderEventRowMapper());
