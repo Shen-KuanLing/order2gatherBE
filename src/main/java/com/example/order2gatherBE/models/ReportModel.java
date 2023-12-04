@@ -1,25 +1,25 @@
 package com.example.order2gatherBE.models;
 
+import java.sql.Timestamp;
+
 // import java.security.Timestamp;
 
 import javax.validation.constraints.NotNull;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Component
 public class ReportModel {
-    @NotNull
     private int uid;
-   @NotNull
     private int oid;
-    @NotNull
-    private String time;
-    @NotNull
+    private Timestamp time;
     private String comment;
     // set
-    public void setReport(int uid, int oid, String time, String comment) {
+    public void setReport(int uid, int oid, Timestamp time, String comment) {
         this.uid=uid;
-
         this.oid=oid;
         this.time=time;
         this.comment=comment;
@@ -33,7 +33,7 @@ public class ReportModel {
         return this.oid;
     }
 
-    public String getTimestamp(){
+    public Timestamp getTime(){
         return this.time;
     }
 

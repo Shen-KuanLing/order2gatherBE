@@ -10,8 +10,8 @@ import com.example.order2gatherBE.models.UserModel;
 import com.example.order2gatherBE.models.OrderEventModel;
 import com.example.order2gatherBE.models.OrderItemModel;
 import com.example.order2gatherBE.repository.OrderItemRepository;
+import java.sql.Timestamp;
 
-import java.security.Timestamp;
 import java.util.*;
 
 @Repository // Communicate with DB, use MYSQL
@@ -26,7 +26,7 @@ public class ReportRepository {
     public void addReport(ReportModel report){
 		System.out.println("EXCUTE INSERT ");
         jdbcTemplate.update("INSERT INTO report(uid, oid, time, comment) "+ "VALUES (?,?,?,?)",
-                            report.getUID(), report.getOID(),report.getTimestamp(), report.getComment());
+                            report.getUID(), report.getOID(),report.getTime(), report.getComment());
     }
     public int getHostID(int oid){
         String sql_1 = "Select * from orderEvent where id = ?";
@@ -106,7 +106,7 @@ public class ReportRepository {
             temp.setReport(
                 (int)itemMap.get("uid"),
                 (int)itemMap.get("oid"),
-                (String)itemMap.get("time"),
+                (Timestamp)itemMap.get("time"),
                 (String)itemMap.get("comment"));
             reportList.add(temp);
             // System.out.println(temp.getUID()+(String)temp.getFoodName());

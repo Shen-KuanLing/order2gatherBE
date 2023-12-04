@@ -1,6 +1,6 @@
 package com.example.order2gatherBE.controllers;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -99,11 +99,11 @@ public class ReportController {
     }
     @GetMapping(path="/getGmail")
     public ResponseEntity<Dictionary<Integer,String>> getGmail(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestParam int oid ) {
-        // token = token.replace("Bearer ", "");
-        // int auth_uid = authenticationService.verify(token);
-        // if (auth_uid == -1) {
-        //     return null;
-        // }
+        token = token.replace("Bearer ", "");
+        int auth_uid = authenticationService.verify(token);
+        if (auth_uid == -1) {
+            return null;
+        }
         return new ResponseEntity<>(reportService.findGmail(oid),HttpStatus.OK);
 
     }
