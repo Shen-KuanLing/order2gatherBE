@@ -19,7 +19,7 @@ public class RestaurantFormatGenerator {
             throw new ResponseEntityException("Failed to build Request Entity", e.getMessage());
         }
     }
-    public static FoodModel[] toFood(String json,int  rid)  {
+    public static FoodModel[] toFood(String json)  {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(json, FoodModel[].class);

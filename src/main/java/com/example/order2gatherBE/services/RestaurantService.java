@@ -102,16 +102,27 @@ public class RestaurantService {
             throw new DataAccessException(500, "Fail to transfer Byte array ", e.getMessage());
         }
     }
-
-    public void savefoods(List<FoodModel> foods){
+    //Saving Foods
+    public String savefoods(List<FoodModel> foods){
         try {
-            foodRepository.save(foods);
+            return foodRepository.save(foods);
             //System.out.println("Save Image "+ output);
         }catch(Exception e){
             //System.out.println("Save Image Failed!");
             throw new DataAccessException(500, "Fail to save foods ", e.getMessage());
         }
     }
+    //Update foods
+    public String updatefoods(List<FoodModel> foods){
+        try {
+            return foodRepository.update(foods);
+            //System.out.println("Save Image "+ output);
+        }catch(Exception e){
+            //System.out.println("Save Image Failed!");
+            throw new DataAccessException(500, "Fail to update foods ", e.getMessage());
+        }
+    }
+
 
     //Delete Restaurant by restaurant ID
     public int deleteRestaurant(int rid, int uid){
