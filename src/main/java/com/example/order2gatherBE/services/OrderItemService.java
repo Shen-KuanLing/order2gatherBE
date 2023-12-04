@@ -104,8 +104,7 @@ public class OrderItemService {
             ordersList.add(orderMap);
         }
 
-        Map<String, Object> responseData = new HashMap<>();
-        responseData.put("data", Map.of("oid", oid, "orders", ordersList, "totalPrice", totalPrice));
+        Map<String, Object> responseData = Map.of("oid", oid, "orders", ordersList, "totalPrice", totalPrice);
         return responseData;
     }
 }

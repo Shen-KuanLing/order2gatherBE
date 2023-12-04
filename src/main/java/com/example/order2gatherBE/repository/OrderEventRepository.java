@@ -60,8 +60,8 @@ public class OrderEventRepository {
     }
     public OrderEventModel getOrderEventByOid(Integer oid) {
         String sql = "SELECT oe.id, oe.rid, oe.hostId, oe.secretcode, oe.createTime, oe.stopOrderingTime, "
-                + "oe.endEventTime, oe.estimatedArrivalTime, oe.totalPrice, oe.totalPeople, oe.status, r.name AS restaurantName "
-                + "FROM orderEvent oe JOIN restaurant r ON oe.rid = r.id WHERE oe.id = ?";
+                + "oe.endEventTime, oe.estimatedArrivalTime, oe.totalPrice, oe.totalPeople, oe.status, r.name AS restaurantName, u.gmail AS hostGmail "
+                + "FROM orderEvent oe JOIN restaurant r ON oe.rid = r.id JOIN user u ON oe.hostId = u.id WHERE oe.id = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{oid}, new OrderEventRowMapper());
         } catch (EmptyResultDataAccessException e) {
