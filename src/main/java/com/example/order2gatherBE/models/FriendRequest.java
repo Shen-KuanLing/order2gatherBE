@@ -20,6 +20,30 @@ public class FriendRequest {
         }
     }
 
+    static public class Delete {
+        @NotNull(message = "The fid is required.")
+        private int fid;
+
+        public int getFid() {
+            return fid;
+        }
+    }
+
+    static public class RemoveUserFromGroup {
+        @NotNull(message = "The fid is required.")
+        private int fid;
+        @NotNull(message = "The gid is required.")
+        private int gid;
+
+        public int getFid() {
+            return fid;
+        }
+
+        public int getGid() {
+            return gid;
+        }
+    }
+
     static public class GetGroupInfo {
         @NotNull(message = "The gid is required")
         private int gid;
