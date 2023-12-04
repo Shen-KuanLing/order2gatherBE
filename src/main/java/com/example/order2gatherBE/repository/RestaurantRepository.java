@@ -21,11 +21,11 @@ public class RestaurantRepository{
     // Get Restaurant Detail
     public List<RestaurantModel> getRestDetail(int restaurantID, int uid)
     {
-        String sql = "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ;";
+        String sql = "Select * FROM restaurant WHERE Id = ? and isDelete = 0 ;";
         List<RestaurantModel> restaurantList = null;
         try {
             restaurantList = this.jdbcTemplate.query(sql,
-                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), restaurantID, uid);
+                    new BeanPropertyRowMapper<RestaurantModel>(RestaurantModel.class), restaurantID);
         }catch(Exception e){
             throw new DataAccessException(404, "[SQL EXCEPTION]: Get Image Failed. Please check is deleted or not. ", e.getMessage());
         }
