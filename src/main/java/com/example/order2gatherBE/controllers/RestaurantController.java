@@ -183,6 +183,7 @@ public class RestaurantController {
         if(images != null) {
             Arrays.asList(images).stream().forEach(image -> {
                 restaurantService.saveImage(restModel.getId(), image);
+                System.out.println("here");
                 fileNames.add(image.getOriginalFilename());
             });
         }

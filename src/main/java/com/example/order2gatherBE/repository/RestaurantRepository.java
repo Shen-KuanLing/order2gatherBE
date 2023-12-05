@@ -84,7 +84,7 @@ public class RestaurantRepository{
     }
     public int getSaveRestaurantID(){
         try{
-            return this.jdbcTemplate.queryForObject("Select count(*) FROM Restaurant", Integer.class);
+            return this.jdbcTemplate.queryForObject("SELECT id FROM Restaurant ORDER BY id DESC LIMIT 1", Integer.class);
         }catch(Exception e){
             throw new DataAccessException(500, "[SQL EXCEPTION]: Fail to get Restaurant Table Size", e.getMessage());
         }
