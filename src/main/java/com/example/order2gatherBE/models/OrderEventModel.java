@@ -13,6 +13,7 @@ public class OrderEventModel {
 
     private String rName;
     private Integer hostID;
+    private String hostGmail;
     private List<Integer> memberList;
 
     @NotEmpty
@@ -56,6 +57,14 @@ public class OrderEventModel {
 
     public void setHostID(Integer hostID) {
         this.hostID = hostID;
+    }
+
+    public String getHostGmail() {
+        return hostGmail;
+    }
+
+    public void setHostGmail(String hostGmail) {
+        this.hostGmail = hostGmail;
     }
 
     public List<Integer> getMemberList() {

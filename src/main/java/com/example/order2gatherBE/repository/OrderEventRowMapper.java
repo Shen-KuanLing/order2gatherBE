@@ -15,6 +15,7 @@ public class OrderEventRowMapper implements RowMapper<OrderEventModel> {
         orderEventModel.setRid(rs.getInt("rid"));
         orderEventModel.setRName(rs.getString("restaurantName"));
         orderEventModel.setHostID(rs.getInt("hostId"));
+        orderEventModel.setHostGmail(rs.getString("hostGmail"));
         orderEventModel.setSecretCode(rs.getString("secretcode"));
         orderEventModel.setCreateTime(rs.getTimestamp("createTime"));
         orderEventModel.setStopOrderingTime(

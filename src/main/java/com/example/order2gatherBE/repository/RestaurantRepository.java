@@ -15,11 +15,9 @@ public class RestaurantRepository {
     private JdbcTemplate jdbcTemplate;
 
     // Get Restaurant Detail
-    public RestaurantModel getRestDetail(int restaurantID, int uid) {
-        String sql =
-            "Select * FROM restaurant WHERE Id = ? and uid = ? and isDelete = 0 ;";
+    public List<RestaurantModel> getRestDetail(int restaurantID, int uid) {
+        String sql = "Select * FROM restaurant WHERE Id = ? and isDelete = 0 ;";
         List<RestaurantModel> restaurantList = null;
-        RestaurantModel restaurantModel = null;
         try {
             restaurantList =
                 this.jdbcTemplate.query(
@@ -27,11 +25,8 @@ public class RestaurantRepository {
                         new BeanPropertyRowMapper<RestaurantModel>(
                             RestaurantModel.class
                         ),
-                        restaurantID,
-                        uid
+                        restaurantID
                     );
-            if (!restaurantList.isEmpty()) restaurantModel =
-                restaurantList.get(0);
         } catch (Exception e) {
             throw new DataAccessException(
                 404,
@@ -39,7 +34,7 @@ public class RestaurantRepository {
                 e.getMessage()
             );
         }
-        return restaurantModel;
+        return restaurantList;
     }
 
     // Add Restaurant Information
@@ -70,7 +65,7 @@ public class RestaurantRepository {
     // Update Restaurant Information
     public int update(RestaurantModel restaurantModel) {
         String sql = String.format(
-            "UPDATE Restaurant SET name=\"%s\", address=\"%s\", phone=\"%s\", openHour=\"%s\" WHERE id=%d AND uid=%d;",
+            "UPDATE Restaurant SET name=\"%s\", address=\"%s\", phone=\"%s\", openHour=\"%s\" WHERE id=%d AND uid=%d AND isDelete=0;",
             restaurantModel.getName(),
             restaurantModel.getAddress(),
             restaurantModel.getPhone(),
@@ -136,7 +131,7 @@ public class RestaurantRepository {
     public int getSaveRestaurantID() {
         try {
             return this.jdbcTemplate.queryForObject(
-                    "Select count(*) FROM Restaurant",
+                    "SELECT id FROM Restaurant ORDER BY id DESC LIMIT 1",
                     Integer.class
                 );
         } catch (Exception e) {

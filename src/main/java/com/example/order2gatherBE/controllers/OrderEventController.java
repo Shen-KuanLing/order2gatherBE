@@ -50,7 +50,7 @@ public class OrderEventController {
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
         orderEventModel.setHostID(uid);
-        orderEventService.createOrderEvent(orderEventModel);
+        int status = orderEventService.createOrderEvent(orderEventModel);
 
         String jsonResponse = String.format(
             "{\"id\": %d, \"SecretCode\": \"%s\"}",

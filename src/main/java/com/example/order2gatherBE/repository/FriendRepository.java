@@ -34,7 +34,7 @@ public class FriendRepository {
 
     public boolean isGroupMember(int uid, int gid) {
         String sql =
-            "select count(*) from user2Group where uid = ? and gid = ?";
+            "select count(*) from user2group where uid = ? and gid = ?";
         return jdbcTemplate.queryForObject(sql, Integer.class, uid, gid) > 0;
     }
 
@@ -44,20 +44,33 @@ public class FriendRepository {
         return jdbcTemplate.queryForObject(sql, Integer.class, uid1, uid2) > 0;
     }
 
+    public boolean deleteFriend(int uid1, int uid2) {
+        String sql = "Delete from friend where user1 = ? and user2 = ?";
+        return jdbcTemplate.update(sql, uid1, uid2) > 0;
+    }
+
+    public boolean removeUserFromGroup(int uid, int gid) {
+        String sql = "Delete from `user2group` where uid = ? and gid = ?";
+        return jdbcTemplate.update(sql, uid, gid) > 0;
+    }
+
     public boolean isAllFriend(int uid1, List<Integer> uid2List) {
-        String user2Para = uid2List
-            .stream()
-            .map(n -> String.valueOf(n))
-            .collect(Collectors.joining(","));
         String sql =
             "SELECT COUNT(*) FROM friend WHERE user1 = ? AND user2 IN (?)";
-        int count = jdbcTemplate.queryForObject(
-            sql,
-            Integer.class,
-            uid1,
-            user2Para
-        );
-        return count == uid2List.size();
+        for (int i = 0; i < uid2List.size(); i++) {
+            if (
+                jdbcTemplate.queryForObject(
+                    sql,
+                    Integer.class,
+                    uid1,
+                    uid2List.get(i)
+                ) <=
+                0
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int createGroup(String gname) {
@@ -103,7 +116,8 @@ public class FriendRepository {
             }
         );
         for (int updateCount : updateCounts) {
-            if (updateCount <= 0) {
+            System.out.println(updateCount);
+            if (updateCount < 0) {
                 return false;
             }
         }
@@ -116,6 +130,13 @@ public class FriendRepository {
             "friend.user2NickName as nickname from friend left join user on friend.user2=user.id where user1=?";
         List<Map<String, Object>> friends = jdbcTemplate.queryForList(sql, uid);
         return friends;
+    }
+
+    public List<Map<String, Object>> getUserGroup(int uid) {
+        String sql =
+            "Select `group`.gid as gid, `group`.name as name, user2group.role role from user2group left join `group` on user2group.gid = `group`.gid where user2group.uid=?";
+        List<Map<String, Object>> groups = jdbcTemplate.queryForList(sql, uid);
+        return groups;
     }
 
     public GroupModel getGroup(int gid) {

@@ -29,8 +29,29 @@ public class FriendService {
         return friendRepository.add(uid1, user2.getId(), user2Nickname);
     }
 
-    public List<Map<String, Object>> get(int uid) {
-        return friendRepository.getUserFriend(uid);
+    public boolean delete(int uid1, int uid2) {
+        if (!friendRepository.isFriend(uid1, uid2)) {
+            return true;
+        }
+        return friendRepository.deleteFriend(uid1, uid2);
+    }
+
+    public boolean removeUserFromGroup(int uid1, int uid2, int gid) {
+        if (
+            !friendRepository.isFriend(uid1, uid2) ||
+            !friendRepository.isGroupMember(uid1, gid) ||
+            !friendRepository.isGroupMember(uid2, gid)
+        ) {
+            return false;
+        }
+        return friendRepository.removeUserFromGroup(uid2, gid);
+    }
+
+    public HashMap<String, Object> get(int uid) {
+        HashMap<String, Object> res = new HashMap<String, Object>();
+        res.put("friends", friendRepository.getUserFriend(uid));
+        res.put("groups", friendRepository.getUserGroup(uid));
+        return res;
     }
 
     public HashMap<String, Object> getGroupInfo(int uid, int gid) {
@@ -62,6 +83,7 @@ public class FriendService {
             !friendRepository.isGroupMember(uid, gid) ||
             !friendRepository.isAllFriend(uid, fids)
         ) {
+            System.out.println(uid);
             return false;
         }
         // role = 0 means normal member

@@ -7,7 +7,6 @@ import lombok.Data;
 public class FoodModel {
     private Integer id;
 
-    @NotNull
     private Integer rid;
 
     @NotNull

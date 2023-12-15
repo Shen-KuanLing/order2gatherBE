@@ -4,10 +4,18 @@
 # Auto-update the version of the hooks with
 # 'pre-commit autoupdate'
 
+# For pre-commit-hooks, See https://pre-commit.com/hooks.html for more information
 repos:
-  - repo: local
-    hooks:
-    - id: code-formatting-with-spotless
-      name: code-formatting-with-spotless
-      entry: ./hooks/pre-commit
-      language: system
+  -   repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.2.0
+      hooks:
+        -   id: trailing-whitespace
+        -   id: end-of-file-fixer
+        -   id: check-yaml
+        -   id: check-added-large-files
+  -   repo: local
+      hooks:
+        -   id: code-formatting-with-spotless
+            name: code-formatting-with-spotless
+            entry: ./hooks/pre-commit
+            language: system

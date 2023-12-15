@@ -15,13 +15,7 @@ public class RestaurantImageModel {
     private Integer rId;
 
     public String toString() {
-        System.out.println(menuImage.length);
         String encoderImage = Base64.getEncoder().encodeToString(menuImage);
-
-        return String.format(
-            "{\"rid\":%s, \"menuImage\": \"%s\"}",
-            rId,
-            encoderImage
-        );
+        return encoderImage;
     }
 }

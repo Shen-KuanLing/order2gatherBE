@@ -24,18 +24,8 @@ public class AuthenticationServiceTests {
     void login() {
         UserModel user1 = new UserModel(); // user1 exist in db
         user1.setId(1);
-        user1.setGmail("test1@gmail.com");
-        user1.setUsername("user1");
-        user1.setLastLogin(new Timestamp(new Date().getTime()));
 
-        Mockito
-            .when(authenticationRepository.findUserbyGmail(user1.getGmail()))
-            .thenReturn(user1);
-
-        String token = authenticationService.login(
-            user1.getGmail(),
-            user1.getUsername()
-        );
+        String token = authenticationService.createAccessToken(user1.getId());
 
         // Test the jwt token is valid
         Assertions.assertEquals(

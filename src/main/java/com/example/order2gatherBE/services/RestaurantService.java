@@ -10,6 +10,7 @@ import com.example.order2gatherBE.repository.FoodRepository;
 import com.example.order2gatherBE.repository.RestaurantImageRepository;
 import com.example.order2gatherBE.repository.RestaurantRepository;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -48,27 +49,32 @@ public class RestaurantService {
     public HashMap<String, Object> getRestaurantList(int userID) {
         List<RestaurantModel> listRest = restaurantRepository.findByUId(userID);
         HashMap<String, Object> objMap = new HashMap<String, Object>();
-        objMap.put("restaurants", listRest);
+        objMap.put("restaurant", listRest);
         return objMap;
     }
 
     public HashMap<String, Object> getRestaurantDetail(int rid, int uid) {
         HashMap<String, Object> objMap = new HashMap<String, Object>();
 
-        RestaurantModel rest = restaurantRepository.getRestDetail(rid, uid);
+        List<RestaurantModel> rest = restaurantRepository.getRestDetail(
+            rid,
+            uid
+        );
         // Null return empty map
-        if (rest == null) return objMap;
+        if (rest == null || rest.isEmpty()) return objMap;
         List<RestaurantImageModel> images = null;
-        //System.out.println("pass");
-        if (!rest.getIsDelete()) images = restaurantImageRepository.get(rid); // Using the upload image
+
+        if (!rest.isEmpty() && !rest.get(0).getIsDelete()) images =
+            restaurantImageRepository.get(rid); // Using the upload image
 
         List<FoodModel> foods = foodRepository.getFoods(rid);
 
         //Construct Image base64 response
-        String imageformat = "[ ";
-        for (RestaurantImageModel image : images) imageformat +=
-            image.toString() + " ,";
-        imageformat += "]";
+        List<String> imageformat = new ArrayList<>();
+        for (RestaurantImageModel image : images) imageformat.add(
+            image.toString()
+        );
+
         //Using the upload image
 
         //Generate the response
@@ -99,8 +105,42 @@ public class RestaurantService {
         }
     }
 
+    //Saving Foods
+    public String savefoods(List<FoodModel> foods) {
+        try {
+            return foodRepository.save(foods);
+            //System.out.println("Save Image "+ output);
+        } catch (Exception e) {
+            //System.out.println("Save Image Failed!");
+            throw new DataAccessException(
+                500,
+                "Fail to save foods ",
+                e.getMessage()
+            );
+        }
+    }
+
+    //Update foods
+    public String updatefoods(List<FoodModel> foods) {
+        try {
+            return foodRepository.update(foods);
+            //System.out.println("Save Image "+ output);
+        } catch (Exception e) {
+            //System.out.println("Save Image Failed!");
+            throw new DataAccessException(
+                500,
+                "Fail to update foods ",
+                e.getMessage()
+            );
+        }
+    }
+
     //Delete Restaurant by restaurant ID
     public int deleteRestaurant(int rid, int uid) {
         return restaurantRepository.deleteById(rid, uid);
+    }
+
+    public int deleteFood(int rid, int fid) {
+        return foodRepository.deleteById(rid, fid);
     }
 }
